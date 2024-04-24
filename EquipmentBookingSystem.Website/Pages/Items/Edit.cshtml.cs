@@ -48,7 +48,16 @@ namespace EquipmentBookingSystem.Website.Pages_Items
                 return Page();
             }
 
-            _context.Attach(Item).State = EntityState.Modified;
+            var oldItem = await _context.Item.SingleOrDefaultAsync(m => m.Id == Item.Id);
+            oldItem.Name = Item.Name;
+            oldItem.UpdatedDate = DateTime.Now;
+
+            var x = User.Identity?.Name;
+            oldItem.UpdatedBy = x;
+
+
+
+            // _context.Attach(Item).State = EntityState.Modified;
 
             try
             {

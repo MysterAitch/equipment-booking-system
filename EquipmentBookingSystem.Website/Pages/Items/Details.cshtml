@@ -18,16 +18,28 @@
             @Html.DisplayFor(model => model.Item.Name)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Item.CreatedAt)
+            @Html.DisplayNameFor(model => model.Item.CreatedDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Item.CreatedAt)
+            @Html.DisplayFor(model => model.Item.CreatedDate)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Item.Modified)
+            @Html.DisplayNameFor(model => model.Item.UpdatedDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Item.Modified)
+            @Html.DisplayFor(model => model.Item.UpdatedDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Item.CreatedBy)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Item.CreatedBy)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Item.UpdatedBy)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Item.UpdatedBy)
         </dd>
     </dl>
 </div>

@@ -21,6 +21,7 @@ namespace EquipmentBookingSystem.Website.Pages_Items
 
         public IActionResult OnGet()
         {
+            Item = new Item();
             return Page();
         }
 
@@ -30,10 +31,16 @@ namespace EquipmentBookingSystem.Website.Pages_Items
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
+
+            Item.CreatedBy = User.Identity?.Name;
+            Item.UpdatedBy = User.Identity?.Name;
+
             if (!ModelState.IsValid)
             {
                 return Page();
             }
+
+
 
             _context.Item.Add(Item);
             await _context.SaveChangesAsync();
