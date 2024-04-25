@@ -56,6 +56,8 @@ namespace EquipmentBookingSystem.Website.Pages_Items
             oldItem.UpdatedBy = x;
 
 
+            // TODO: Record history of changes
+
 
             // _context.Attach(Item).State = EntityState.Modified;
 

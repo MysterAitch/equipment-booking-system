@@ -12,6 +12,9 @@
   - Note: auth with SingleOrg requires all users to be in that directory,
     and allowing multi-org / personal accounts requires publisher verification.
     - https://learn.microsoft.com/en-gb/entra/identity-platform/publisher-verification-overview
+  - Enable sign-up experience (NOTE: Attempted, but not gotten working yet)
+    - https://github.com/AzureAD/microsoft-identity-web/wiki/web-apps
+    - https://learn.microsoft.com/en-gb/entra/external-id/self-service-sign-up-user-flow
 
 - SQL Server of some kind with a database and relevant credentials for connection string
   - Azure SQL Database
@@ -47,7 +50,7 @@ dotnet add package Microsoft.EntityFrameworkCore.Tools
 
 ## Scaffold a new razor page
 ```shell
-dotnet aspnet-codegenerator razorpage -m Item -dc EquipmentBookingSystem.Website.Data.WebsiteDbContext -udl -outDir Pages/Items --databaseProvider SqlServer
+dotnet aspnet-codegenerator razorpage -m Item --dbContext EquipmentBookingSystem.Website.Data.WebsiteDbContext -udl -outDir Pages/Items --databaseProvider SqlServer
 ```
 
 

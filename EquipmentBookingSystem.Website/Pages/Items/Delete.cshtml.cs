@@ -53,7 +53,7 @@ namespace EquipmentBookingSystem.Website.Pages_Items
             if (item != null)
             {
                 Item = item;
-                _context.Item.Remove(Item);
+                _context.Item.Remove(Item); // TODO: Soft delete with record of history
                 await _context.SaveChangesAsync();
             }
 
