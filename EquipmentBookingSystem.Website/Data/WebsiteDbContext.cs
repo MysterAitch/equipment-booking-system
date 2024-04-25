@@ -16,6 +16,19 @@ namespace EquipmentBookingSystem.Website.Data
 
         public DbSet<EquipmentBookingSystem.Website.Models.Item> Item { get; set; } = default!;
 
+        public DbSet<EquipmentBookingSystem.Website.Models.Booking> Booking { get; set; } = default!;
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Item>()
+                .HasMany(i => i.Bookings)
+                .WithMany(b => b.Items);
+
+            modelBuilder.Entity<Booking>()
+                .HasMany(b => b.Items)
+                .WithMany(i => i.Bookings);
+        }
 
         public override int SaveChanges()
         {
