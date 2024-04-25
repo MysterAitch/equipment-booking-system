@@ -23,6 +23,15 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
         [BindProperty]
         public Booking Booking { get; set; } = default!;
 
+        protected internal List<Item> Items { get; set; } = new List<Item>();
+
+        public List<SelectListItem> Options => Items.Select(s => new SelectListItem
+        {
+            Value = s.Id.ToString(),
+            Text = s.Name,
+            Selected = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
+        }).ToList();
+
         public async Task<IActionResult> OnGetAsync(Guid? id)
         {
             if (id == null)
@@ -30,7 +39,11 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
                 return NotFound();
             }
 
-            var booking =  await _context.Booking.FirstOrDefaultAsync(m => m.Id == id);
+            Items = await _context.Item.ToListAsync();
+
+            var booking =  await _context.Booking
+                .Include(b => b.Items)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (booking == null)
             {
                 return NotFound();
@@ -43,12 +56,33 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
+            Items = await _context.Item.ToListAsync();
+
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.Attach(Booking).State = EntityState.Modified;
+            var oldBooking = await _context.Booking.SingleOrDefaultAsync(m => m.Id == Booking.Id);
+            oldBooking.BookingStart = Booking.BookingStart;
+            oldBooking.EventStart = Booking.EventStart;
+            oldBooking.EventEnd = Booking.EventEnd;
+            oldBooking.BookingEnd = Booking.BookingEnd;
+            oldBooking.BookedFor = Booking.BookedFor;
+            oldBooking.Notes = Booking.Notes;
+
+            oldBooking.Items.Clear();
+            oldBooking.Items.AddRange(Booking.Items);
+
+            oldBooking.UpdatedDate = DateTime.Now;
+
+            var x = User.Identity?.Name;
+            oldBooking.UpdatedBy = x;
+
+
+            // TODO: Record history of changes
+
+            // _context.Attach(Booking).State = EntityState.Modified;
 
             try
             {

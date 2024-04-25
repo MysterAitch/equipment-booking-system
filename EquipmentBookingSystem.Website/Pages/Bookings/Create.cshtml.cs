@@ -21,6 +21,7 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
 
         public IActionResult OnGet()
         {
+            Booking = new Booking();
             return Page();
         }
 
@@ -30,6 +31,9 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
+            Booking.CreatedBy = User.Identity?.Name;
+            Booking.UpdatedBy = User.Identity?.Name;
+
             if (!ModelState.IsValid)
             {
                 return Page();

@@ -53,7 +53,7 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
             if (booking != null)
             {
                 Booking = booking;
-                _context.Booking.Remove(Booking);
+                _context.Booking.Remove(Booking); // TODO: Soft delete with record of history
                 await _context.SaveChangesAsync();
             }
 
