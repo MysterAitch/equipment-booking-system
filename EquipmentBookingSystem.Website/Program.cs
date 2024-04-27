@@ -21,8 +21,17 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
+
 builder.Services.AddDbContext<WebsiteDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WebsiteDbContext") ?? throw new InvalidOperationException("Connection string 'WebsiteDbContext' not found.")));
+{
+    var dbConnectionString = builder.Configuration.GetConnectionString("WebsiteDbContext") ??
+                             throw new InvalidOperationException("Connection string 'WebsiteDbContext' not found.");
+    options.UseSqlServer(dbConnectionString);
+});
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<WebsiteDbContext>();
 
 var app = builder.Build();
 
@@ -43,5 +52,6 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHealthChecks("/healthz");
 
 app.Run();
