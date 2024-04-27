@@ -48,7 +48,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner
+          dotnet tool update dotnet-sonarscanner --global
           
       - name: Build and analyze
         env:
