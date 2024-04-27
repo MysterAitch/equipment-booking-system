@@ -83,3 +83,17 @@ Note, requires az cli if using Azure AD authentication (e.g., locally)
 dotnet ef database update
 ```
 
+
+
+## Azure Web App Configuration
+
+App Settings:
+- Used to authenticate web app to database(?)
+  - `AZURE_CLIENT_ID`
+  - `AZURE_CLIENT_SECRET`
+  - `AZURE_TENANT_ID`
+- Used to authenticate user to web app (note double underscore `__` used to represent nested values)
+  - `AzureAd__Domain`
+  - `AzureAd__ClientId`
+  - `AzureAd__ClientSecret`
+  - `AzureAd__TenantId`
