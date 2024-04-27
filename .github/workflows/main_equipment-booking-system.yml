@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@608ee757cfcce72c2e91e99aca128e0cae67de87 # v1
         with:
           dotnet-version: '8.x'
           include-prerelease: true
@@ -29,7 +29,7 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
@@ -45,12 +45,12 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3
         with:
           name: .net-app
       
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@cb79c773a3cfa27f31f25eb3f677781210c9ce3d # v1
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EC8D41D7ED194998B2FFA5AB6914AB9E }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F310A3D7A0764AB2A9C27424D82C3755 }}
@@ -58,7 +58,7 @@ jobs:
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@8e359a3761daf647ae3fa56123a9c3aa8a51d269 # v2
         with:
           app-name: 'equipment-booking-system'
           slot-name: 'Production'
