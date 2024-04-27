@@ -58,7 +58,7 @@ jobs:
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@8e359a3761daf647ae3fa56123a9c3aa8a51d269 # v2
+        uses: azure/webapps-deploy@de617f46172a906d0617bb0e50d81e9e3aec24c8 # v3
         with:
           app-name: 'equipment-booking-system'
           slot-name: 'Production'
