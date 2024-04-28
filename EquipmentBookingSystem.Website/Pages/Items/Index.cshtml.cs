@@ -13,7 +13,7 @@ public class IndexModel : PageModel
         _context = context;
     }
 
-    public IList<Item> Item { get;set; } = default!;
+    public IList<Item> Item { get; set; } = default!;
 
     public async Task OnGetAsync()
     {

@@ -5,7 +5,7 @@ namespace EquipmentBookingSystem.Website.Data;
 
 public class WebsiteDbContext : DbContext
 {
-    public WebsiteDbContext (DbContextOptions<WebsiteDbContext> options)
+    public WebsiteDbContext(DbContextOptions<WebsiteDbContext> options)
         : base(options)
     {
     }

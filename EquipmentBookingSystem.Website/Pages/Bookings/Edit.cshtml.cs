@@ -30,7 +30,7 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        var booking =  await _context.Booking
+        var booking = await _context.Booking
             .Include(b => b.Items)
             .FirstOrDefaultAsync(m => m.Id == id);
         if (booking == null)

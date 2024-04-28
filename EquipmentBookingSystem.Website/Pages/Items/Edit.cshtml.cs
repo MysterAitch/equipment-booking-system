@@ -24,7 +24,7 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        var item =  await _context.Item.FirstOrDefaultAsync(m => m.Id == id);
+        var item = await _context.Item.FirstOrDefaultAsync(m => m.Id == id);
         if (item == null)
         {
             return NotFound();
