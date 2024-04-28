@@ -1,0 +1,24 @@
+root = true
+
+[*.cs]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+
+## Enforce file-scoped namespaces
+csharp_style_namespace_declarations = file_scoped:error
+
+## IDE0005: Using directive is unnecessary.
+## Note: https://github.com/dotnet/roslyn/issues/41640
+dotnet_diagnostic.IDE0005.severity = error
+
+## Enforce parameter names should match base declaration (when overriding methods)
+dotnet_diagnostic.CA1725.severity = error
+
+
+[*.yml]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true

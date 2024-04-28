@@ -1,6 +1,4 @@
-﻿@using System.Security.Principal
-
-<ul class="navbar-nav">
+﻿<ul class="navbar-nav">
 @if (User.Identity?.IsAuthenticated == true)
 {
         <span class="navbar-text text-dark">Hello @User.Identity?.Name!</span>
