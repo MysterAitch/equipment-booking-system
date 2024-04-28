@@ -5,6 +5,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.EntityFrameworkCore;
 using EquipmentBookingSystem.Website.Data;
+using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -34,6 +35,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<WebsiteDbContext>();
+
+
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 var app = builder.Build();
 

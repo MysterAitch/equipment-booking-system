@@ -16,6 +16,8 @@ public class DetailsModel : PageModel
 
     public Booking Booking { get; set; } = default!;
 
+    public List<Audit> Changes { get; set; } = new();
+
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
         if (id == null)
@@ -32,6 +34,16 @@ public class DetailsModel : PageModel
         {
             Booking = booking;
         }
+
+        Changes = await _context.Audits
+            .Where(a => a.EntityId == id)
+            .Where(a => !a.PropertyName.Equals("CreatedDate"))
+            .Where(a => !a.PropertyName.Equals("UpdatedDate"))
+            .Where(a => !a.PropertyName.Equals("CreatedBy"))
+            .Where(a => !a.PropertyName.Equals("UpdatedBy"))
+            .OrderByDescending(a => a.ChangeTimeUtc)
+            .ToListAsync();
+
         return Page();
     }
 }

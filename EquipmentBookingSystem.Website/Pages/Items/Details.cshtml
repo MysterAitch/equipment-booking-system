@@ -9,7 +9,7 @@
 
 <div>
     <h4>Item</h4>
-    <hr />
+    <hr/>
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Item.Name)
@@ -46,4 +46,66 @@
 <div>
     <a asp-page="./Edit" asp-route-id="@Model.Item.Id">Edit</a> |
     <a asp-page="./Index">Back to List</a>
+</div>
+
+<br/>
+<br/>
+<br/>
+
+<div>
+    <h4>Audit Changes</h4>
+    <hr/>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                Property
+            </th>
+            <th>
+                Old Value
+            </th>
+            <th>
+                New Value
+            </th>
+            <th>
+                Changed By
+            </th>
+            <th>
+                Timestamp (UTC)
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (Model.Changes.Any())
+        {
+            @foreach (var audit in Model.Changes.OrderByDescending(a => a.ChangeTimeUtc))
+            {
+                <tr>
+                    <td>
+                        @audit.PropertyName
+                    </td>
+                    <td>
+                        @audit.OldValue
+                    </td>
+                    <td>
+                        @audit.NewValue
+                    </td>
+                    <td>
+                        @audit.UserEmail
+                    </td>
+                    <td>
+                        @audit.ChangeTimeUtc
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="50">No changes found</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
 </div>

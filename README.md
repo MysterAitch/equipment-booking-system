@@ -70,6 +70,15 @@ dotnet ef migrations add UpdateModel2
 ```shell
 dotnet ef migrations add AddBookings
 ```
+```shell
+dotnet ef migrations add AddAuditTable
+```
+```shell
+dotnet ef migrations add AddAuditTableEntityId
+```
+```shell
+dotnet ef migrations add AddAuditTableEntityIdNullable
+```
 
 ## Update the database
 

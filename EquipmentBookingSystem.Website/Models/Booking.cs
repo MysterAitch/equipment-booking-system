@@ -6,7 +6,7 @@ public class Booking : BaseEntity
 {
     public Guid Id { get; init; }
 
-    public List<Item> Items { get; } = new();
+    public HashSet<Item> Items { get; } = new();
 
     public DateTime BookingStart { get; set; }
 

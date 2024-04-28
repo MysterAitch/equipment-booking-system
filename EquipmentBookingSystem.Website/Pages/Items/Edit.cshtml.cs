@@ -54,12 +54,6 @@ public class EditModel : PageModel
         var x = User.Identity?.Name ?? throw new UnidentifiedUserException();
         oldItem.UpdatedBy = x;
 
-
-        // TODO: Record history of changes
-
-
-        // _context.Attach(Item).State = EntityState.Modified;
-
         try
         {
             await _context.SaveChangesAsync();

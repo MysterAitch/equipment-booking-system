@@ -4,6 +4,7 @@ using EquipmentBookingSystem.Website.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EquipmentBookingSystem.Website.Migrations
 {
     [DbContext(typeof(WebsiteDbContext))]
-    partial class WebsiteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240428161047_AddAuditTableEntityId")]
+    partial class AddAuditTableEntityId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,7 +51,7 @@ namespace EquipmentBookingSystem.Website.Migrations
                     b.Property<DateTime>("ChangeTimeUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("EntityId")
+                    b.Property<Guid>("EntityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NewValue")

@@ -103,11 +103,6 @@ public class EditModel : PageModel
         var currentUser = User.Identity?.Name ?? throw new UnidentifiedUserException();
         oldBooking.UpdatedBy = currentUser;
 
-
-        // TODO: Record history of changes
-
-        // _context.Attach(Booking).State = EntityState.Modified;
-
         try
         {
             await _context.SaveChangesAsync();
