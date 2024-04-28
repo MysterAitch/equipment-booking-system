@@ -45,7 +45,7 @@ public class EditModel : PageModel
         Items = await _context.Item.ToListAsync();
         Options = Items.Select(s => new CheckBoxListItem()
         {
-            ID = s.Id,
+            Id = s.Id,
             Display = s.Name,
             IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
         }).ToList();
@@ -63,7 +63,7 @@ public class EditModel : PageModel
         {
             Options = Items.Select(s => new CheckBoxListItem()
             {
-                ID = s.Id,
+                Id = s.Id,
                 Display = s.Name,
                 IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
             }).ToList();
@@ -82,7 +82,7 @@ public class EditModel : PageModel
         oldBooking.Items.Clear();
         foreach (var item in Items)
         {
-            var option = Options.SingleOrDefault(o => o.ID == item.Id);
+            var option = Options.SingleOrDefault(o => o.Id == item.Id);
             if (option == null)
             {
                 continue;
@@ -129,11 +129,4 @@ public class EditModel : PageModel
     }
 
 
-}
-
-public class CheckBoxListItem
-{
-    public Guid ID { get; set; }
-    public string Display { get; set; }
-    public bool IsChecked { get; set; }
 }
