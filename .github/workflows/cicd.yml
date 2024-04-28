@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - equipment-booking-system
+name: CI/CD
 
 on:
   push:
@@ -20,6 +20,7 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu'
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4
         with:
@@ -36,6 +37,7 @@ jobs:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4
@@ -43,6 +45,7 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
+          
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: pwsh
@@ -66,7 +69,7 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
         with:
-          name: .net-app
+          name: equipment-booking-system-build-zip
           path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
@@ -83,7 +86,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4
         with:
-          name: .net-app
+          name: equipment-booking-system-build-zip
 
       - name: Login to Azure
         uses: azure/login@6b2456866fc08b011acb422a92a4aa20e2c4de32 # v2
