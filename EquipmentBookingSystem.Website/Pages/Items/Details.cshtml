@@ -85,13 +85,46 @@
                         @audit.PropertyName
                     </td>
                     <td>
-                        @audit.OldValue
+                        @if (audit.OldValue is null)
+                        {
+                            <text>No value (null)</text>
+                        }
+                        else if (string.Empty.Equals(audit.OldValue))
+                        {
+                            <text>No value (empty)</text>
+                        }
+                        else
+                        {
+                            @audit.OldValue
+                        }
                     </td>
                     <td>
-                        @audit.NewValue
+                        @if (audit.NewValue is null)
+                        {
+                            <text>No value (null)</text>
+                        }
+                        else if (string.Empty.Equals(audit.NewValue))
+                        {
+                            <text>No value (empty)</text>
+                        }
+                        else
+                        {
+                            @audit.NewValue
+                        }
                     </td>
                     <td>
-                        @audit.UserEmail
+                        @if (audit.UserEmail is null)
+                        {
+                            <text>No value (null)</text>
+                        }
+                        else if (string.Empty.Equals(audit.UserEmail))
+                        {
+                            <text>No value (empty)</text>
+                        }
+                        else
+                        {
+                            @audit.UserEmail
+                        }
                     </td>
                     <td>
                         @audit.ChangeTimeUtc

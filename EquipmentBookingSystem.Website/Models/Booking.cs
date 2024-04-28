@@ -22,5 +22,7 @@ public class Booking : BaseEntity
     [DataType(DataType.EmailAddress)]
     public string BookedFor { get; set; } = string.Empty;
 
+    [DisplayFormat(ConvertEmptyStringToNull = false)]
+    [Required(AllowEmptyStrings = true)]
     public string Notes { get; set; } = string.Empty;
 }
