@@ -72,6 +72,12 @@ public class EditModel : PageModel
         }
 
         var oldBooking = await _context.Booking.SingleOrDefaultAsync(m => m.Id == Booking.Id);
+        if (oldBooking == null)
+        {
+            // Attempting to edit a booking that doesn't exist
+            return NotFound();
+        }
+
         oldBooking.BookingStart = Booking.BookingStart;
         oldBooking.EventStart = Booking.EventStart;
         oldBooking.EventEnd = Booking.EventEnd;

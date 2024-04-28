@@ -43,6 +43,11 @@ public class EditModel : PageModel
         }
 
         var oldItem = await _context.Item.SingleOrDefaultAsync(m => m.Id == Item.Id);
+        if (oldItem == null)
+        {
+            return NotFound();
+        }
+
         oldItem.Name = Item.Name;
         oldItem.UpdatedDate = DateTime.Now;
 
