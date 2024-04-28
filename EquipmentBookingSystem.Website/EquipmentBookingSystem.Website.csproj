@@ -4,7 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <UserSecretsId>aspnet-EquipmentBookingSystem-29286f6f-8570-4855-8eec-25934457458e</UserSecretsId>
+  </PropertyGroup>
+
+  <!-- Workaround for https://github.com/dotnet/roslyn/issues/41640 -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
