@@ -1,10 +1,10 @@
+using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Website.Pages.Items;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using EquipmentBookingSystem.Website.Models;
-using EquipmentBookingSystem.Website.Pages_Items;
 
-namespace EquipmentBookingSystem.Website.Pages_Bookings;
+namespace EquipmentBookingSystem.Website.Pages.Bookings;
 
 public class EditModel : PageModel
 {

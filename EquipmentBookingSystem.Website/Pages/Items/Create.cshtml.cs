@@ -1,8 +1,8 @@
+using EquipmentBookingSystem.Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using EquipmentBookingSystem.Website.Models;
 
-namespace EquipmentBookingSystem.Website.Pages_Items;
+namespace EquipmentBookingSystem.Website.Pages.Items;
 
 public class CreateModel : PageModel
 {

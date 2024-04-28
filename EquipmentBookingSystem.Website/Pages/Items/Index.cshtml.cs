@@ -1,8 +1,8 @@
+using EquipmentBookingSystem.Website.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using EquipmentBookingSystem.Website.Models;
 
-namespace EquipmentBookingSystem.Website.Pages_Items;
+namespace EquipmentBookingSystem.Website.Pages.Items;
 
 public class IndexModel : PageModel
 {

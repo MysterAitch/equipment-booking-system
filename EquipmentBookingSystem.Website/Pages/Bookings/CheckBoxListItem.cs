@@ -1,4 +1,4 @@
-namespace EquipmentBookingSystem.Website.Pages_Bookings;
+namespace EquipmentBookingSystem.Website.Pages.Bookings;
 
 public class CheckBoxListItem
 {
