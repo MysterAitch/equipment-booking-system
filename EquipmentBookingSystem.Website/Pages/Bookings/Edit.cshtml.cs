@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Website.Pages_Items;
 
 namespace EquipmentBookingSystem.Website.Pages_Bookings;
 
@@ -99,8 +100,8 @@ public class EditModel : PageModel
 
         oldBooking.UpdatedDate = DateTime.Now;
 
-        var x = User.Identity?.Name;
-        oldBooking.UpdatedBy = x;
+        var currentUser = User.Identity?.Name ?? throw new UnidentifiedUserException();
+        oldBooking.UpdatedBy = currentUser;
 
 
         // TODO: Record history of changes

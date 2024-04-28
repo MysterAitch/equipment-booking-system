@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Website.Pages_Items;
 
 namespace EquipmentBookingSystem.Website.Pages_Bookings;
 
@@ -25,8 +26,9 @@ public class CreateModel : PageModel
     // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     public async Task<IActionResult> OnPostAsync()
     {
-        Booking.CreatedBy = User.Identity?.Name;
-        Booking.UpdatedBy = User.Identity?.Name;
+        var currentUser = User.Identity?.Name ?? throw new UnidentifiedUserException();
+        Booking.CreatedBy = currentUser;
+        Booking.UpdatedBy = currentUser;
 
         if (!ModelState.IsValid)
         {

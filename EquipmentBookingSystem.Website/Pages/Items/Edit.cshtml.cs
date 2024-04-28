@@ -51,7 +51,7 @@ public class EditModel : PageModel
         oldItem.Name = Item.Name;
         oldItem.UpdatedDate = DateTime.Now;
 
-        var x = User.Identity?.Name;
+        var x = User.Identity?.Name ?? throw new UnidentifiedUserException();
         oldItem.UpdatedBy = x;
 
 

@@ -25,8 +25,9 @@ public class CreateModel : PageModel
     // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     public async Task<IActionResult> OnPostAsync()
     {
-        Item.CreatedBy = User.Identity?.Name;
-        Item.UpdatedBy = User.Identity?.Name;
+        var currentUser = User.Identity?.Name ?? throw new UnidentifiedUserException();
+        Item.CreatedBy = currentUser;
+        Item.UpdatedBy = currentUser;
 
         if (!ModelState.IsValid)
         {
