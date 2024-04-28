@@ -20,9 +20,6 @@ public class EditModel : PageModel
     protected internal List<Item> Items { get; set; } = new();
 
     [BindProperty]
-    public List<string> SelectedItems { get; set; }
-
-    [BindProperty]
     public List<CheckBoxListItem> Options { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
