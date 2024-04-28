@@ -70,7 +70,7 @@ public class EditModel : PageModel
             }
         }
 
-        return RedirectToPage("./Index");
+        return RedirectToPage("./Details", new { id = Item.Id });
     }
 
     private bool ItemExists(Guid id)

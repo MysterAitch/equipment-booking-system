@@ -112,7 +112,7 @@ public class EditModel : PageModel
             }
         }
 
-        return RedirectToPage("./Index");
+        return RedirectToPage("./Details", new { id = Booking.Id });
     }
 
     private bool BookingExists(Guid id)
