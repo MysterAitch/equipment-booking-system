@@ -23,14 +23,13 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
         [BindProperty]
         public Booking Booking { get; set; } = default!;
 
-        protected internal List<Item> Items { get; set; } = new List<Item>();
+        protected internal List<Item> Items { get; set; } = new();
 
-        public List<SelectListItem> Options => Items.Select(s => new SelectListItem
-        {
-            Value = s.Id.ToString(),
-            Text = s.Name,
-            Selected = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
-        }).ToList();
+        [BindProperty]
+        public List<string> SelectedItems { get; set; }
+
+        [BindProperty]
+        public List<CheckBoxListItem> Options { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(Guid? id)
         {
@@ -39,8 +38,6 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
                 return NotFound();
             }
 
-            Items = await _context.Item.ToListAsync();
-
             var booking =  await _context.Booking
                 .Include(b => b.Items)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -48,18 +45,35 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
             {
                 return NotFound();
             }
+
             Booking = booking;
+
+            Items = await _context.Item.ToListAsync();
+            Options = Items.Select(s => new CheckBoxListItem()
+            {
+                ID = s.Id,
+                Display = s.Name,
+                IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
+            }).ToList();
+
             return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(List<Guid> selectedOptions)
         {
             Items = await _context.Item.ToListAsync();
 
             if (!ModelState.IsValid)
             {
+                Options = Items.Select(s => new CheckBoxListItem()
+                {
+                    ID = s.Id,
+                    Display = s.Name,
+                    IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
+                }).ToList();
+
                 return Page();
             }
 
@@ -72,7 +86,19 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
             oldBooking.Notes = Booking.Notes;
 
             oldBooking.Items.Clear();
-            oldBooking.Items.AddRange(Booking.Items);
+            foreach (var item in Items)
+            {
+                var option = Options.SingleOrDefault(o => o.ID == item.Id);
+                if (option == null)
+                {
+                    continue;
+                }
+
+                if (option.IsChecked)
+                {
+                    oldBooking.Items.Add(item);
+                }
+            }
 
             oldBooking.UpdatedDate = DateTime.Now;
 
@@ -107,5 +133,14 @@ namespace EquipmentBookingSystem.Website.Pages_Bookings
         {
             return _context.Booking.Any(e => e.Id == id);
         }
+
+
+    }
+
+    public class CheckBoxListItem
+    {
+        public Guid ID { get; set; }
+        public string Display { get; set; }
+        public bool IsChecked { get; set; }
     }
 }
