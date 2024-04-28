@@ -61,14 +61,18 @@ public class WebsiteDbContext : DbContext
 
                 // If both properties are null, move on to the next property
                 if (currentProp == null && originalProp == null)
+                {
                     continue;
+                }
 
                 var current = currentProp?.ToString();
                 var original = originalProp?.ToString();
 
                 // If the properties aren't both null, but are still equal, move on to the next property
                 if (current == original)
+                {
                     continue;
+                }
 
                 var audit = new Audit
                 {

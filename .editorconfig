@@ -6,6 +6,10 @@ indent_style = space
 indent_size = 4
 insert_final_newline = true
 
+
+## Enforce use of braces
+csharp_prefer_braces = true:error
+
 ## Enforce file-scoped namespaces
 csharp_style_namespace_declarations = file_scoped:error
 
