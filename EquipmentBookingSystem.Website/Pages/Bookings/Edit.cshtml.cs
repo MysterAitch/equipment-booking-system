@@ -69,7 +69,9 @@ public class EditModel : PageModel
             return Page();
         }
 
-        var oldBooking = await _context.Booking.SingleOrDefaultAsync(m => m.Id == Booking.Id);
+        var oldBooking = await _context.Booking
+            .Include(b => b.Items)
+            .SingleOrDefaultAsync(m => m.Id == Booking.Id);
         if (oldBooking == null)
         {
             // Attempting to edit a booking that doesn't exist
@@ -84,19 +86,10 @@ public class EditModel : PageModel
         oldBooking.Notes = Booking.Notes;
 
         oldBooking.Items.Clear();
-        foreach (var item in Items)
-        {
-            var option = Options.SingleOrDefault(o => o.Id == item.Id);
-            if (option == null)
-            {
-                continue;
-            }
-
-            if (option.IsChecked)
-            {
-                oldBooking.Items.Add(item);
-            }
-        }
+        // oldBooking.Items.RemoveWhere(i => Options.Any(o => o.Id == i.Id && !o.IsChecked));
+        Items.Where(i => Options.Any(o => o.Id == i.Id && o.IsChecked))
+            .ToList()
+            .ForEach(i => oldBooking.Items.Add(i));
 
         oldBooking.UpdatedDate = DateTime.Now;
 
