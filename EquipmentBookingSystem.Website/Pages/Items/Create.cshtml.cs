@@ -8,41 +8,40 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using EquipmentBookingSystem.Website.Data;
 using EquipmentBookingSystem.Website.Models;
 
-namespace EquipmentBookingSystem.Website.Pages_Items
+namespace EquipmentBookingSystem.Website.Pages_Items;
+
+public class CreateModel : PageModel
 {
-    public class CreateModel : PageModel
+    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+
+    public CreateModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
     {
-        private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+        _context = context;
+    }
 
-        public CreateModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
-        {
-            _context = context;
-        }
+    public IActionResult OnGet()
+    {
+        Item = new Item();
+        return Page();
+    }
 
-        public IActionResult OnGet()
+    [BindProperty]
+    public Item Item { get; set; } = default!;
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task<IActionResult> OnPostAsync()
+    {
+        Item.CreatedBy = User.Identity?.Name;
+        Item.UpdatedBy = User.Identity?.Name;
+
+        if (!ModelState.IsValid)
         {
-            Item = new Item();
             return Page();
         }
 
-        [BindProperty]
-        public Item Item { get; set; } = default!;
+        _context.Item.Add(Item);
+        await _context.SaveChangesAsync();
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
-        {
-            Item.CreatedBy = User.Identity?.Name;
-            Item.UpdatedBy = User.Identity?.Name;
-
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            _context.Item.Add(Item);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
-        }
+        return RedirectToPage("./Index");
     }
 }

@@ -8,36 +8,35 @@ using Microsoft.EntityFrameworkCore;
 using EquipmentBookingSystem.Website.Data;
 using EquipmentBookingSystem.Website.Models;
 
-namespace EquipmentBookingSystem.Website.Pages_Bookings
+namespace EquipmentBookingSystem.Website.Pages_Bookings;
+
+public class DetailsModel : PageModel
 {
-    public class DetailsModel : PageModel
+    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+
+    public DetailsModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
     {
-        private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+        _context = context;
+    }
 
-        public DetailsModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
+    public Booking Booking { get; set; } = default!;
+
+    public async Task<IActionResult> OnGetAsync(Guid? id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        public Booking Booking { get; set; } = default!;
-
-        public async Task<IActionResult> OnGetAsync(Guid? id)
+        var booking = await _context.Booking.FirstOrDefaultAsync(m => m.Id == id);
+        if (booking == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var booking = await _context.Booking.FirstOrDefaultAsync(m => m.Id == id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                Booking = booking;
-            }
-            return Page();
+            return NotFound();
         }
+        else
+        {
+            Booking = booking;
+        }
+        return Page();
     }
 }
