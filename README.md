@@ -97,3 +97,30 @@ App Settings:
   - `AzureAd__ClientId`
   - `AzureAd__ClientSecret`
   - `AzureAd__TenantId`
+
+
+Enable Managed Identity for Azure SQL Database
+
+- https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-sql-database?tabs=windowsclient%2Cefcore%2Cdotnet
+
+```sql
+-- web-app name: equipment-booking-system
+-- TODO: Minimise permissions
+-- TODO: Consider a user group, instead of specific/individual users
+-- Server=tcp:equipment-booking-system.database.windows.net,1433;Initial Catalog=equipment-booking-system-database;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication='Active Directory Default';
+
+CREATE USER [equipment-booking-system] FROM EXTERNAL PROVIDER;
+ALTER ROLE db_datareader ADD MEMBER [equipment-booking-system];
+ALTER ROLE db_datawriter ADD MEMBER [equipment-booking-system];
+ALTER ROLE db_ddladmin ADD MEMBER [equipment-booking-system];
+GO
+```
+
+Configure connection string in web app configuration to use managed identity
+
+```
+-- NOTE: AD Default _should_ work, but in practice it seemed to require explicitly specifying AD Managed Identity...?
+Server=tcp:equipment-booking-system.database.windows.net,1433;Initial Catalog=equipment-booking-system-database;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication='Active Directory Default';
+Server=tcp:equipment-booking-system.database.windows.net,1433;Initial Catalog=equipment-booking-system-database;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication='Active Directory Managed Identity';
+```
+
