@@ -4,8 +4,6 @@ public class Item : BaseEntity
 {
     public Guid Id { get; init; }
 
-    public string Name { get; set; } = string.Empty;
-
     public string Manufacturer { get; set; } = string.Empty;
 
     public string Model { get; set; } = string.Empty;
@@ -14,9 +12,18 @@ public class Item : BaseEntity
 
     public HashSet<ItemIdentifier> Identifiers { get; set; } = new();
 
+
+    public ItemIdentifier? SerialNumber => Identifiers.FirstOrDefault(i => i.Type == "Serial Number") ?? null;
+
+    public ItemIdentifier? ProCloudAssetId => Identifiers.FirstOrDefault(i => i.Type == "ProCloud Asset ID") ?? null;
+
+    public ItemIdentifier? CallSign => Identifiers.FirstOrDefault(i => i.Type == "Call Sign") ?? null;
+
+    public ItemIdentifier? Issi => Identifiers.FirstOrDefault(i => i.Type == "ISSI") ?? null;
+
+
     public virtual string DisplayName()
     {
-        // return $"{Name} ({Id})";
-        return $"{Name}";
+        return $"{CallSign} (@{Issi}";
     }
 }

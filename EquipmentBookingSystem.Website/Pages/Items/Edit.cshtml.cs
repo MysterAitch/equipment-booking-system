@@ -111,7 +111,6 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        oldItem.Name = Item.Name;
         oldItem.Manufacturer = Item.Manufacturer;
         oldItem.Model = Item.Model;
 

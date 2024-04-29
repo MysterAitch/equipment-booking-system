@@ -48,7 +48,7 @@ public class EditModel : PageModel
         Options = Items.Select(s => new CheckBoxListItem()
         {
             Id = s.Id,
-            Display = s.Name,
+            Display = s.DisplayName(),
             IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
         }).ToList();
 
@@ -69,7 +69,7 @@ public class EditModel : PageModel
             Options = Items.Select(s => new CheckBoxListItem()
             {
                 Id = s.Id,
-                Display = s.Name,
+                Display = s.DisplayName(),
                 IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
             }).ToList();
 

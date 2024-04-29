@@ -151,7 +151,7 @@
                 @if (Model.Booking.Items.Any())
                 {
                     <ol>
-                        @foreach (var item in Model.Booking.Items.OrderBy(i => i.Name))
+                        @foreach (var item in Model.Booking.Items.OrderBy(i => i.DisplayName()))
                         {
                             <li>
                                 <a asp-area="" asp-page="/Items/Details" asp-route-id="@item.Id">

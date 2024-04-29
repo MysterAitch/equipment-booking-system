@@ -15,9 +15,6 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Item[0].Name)
-        </th>
-        <th>
             Serial Number
         </th>
         <th>
@@ -42,9 +39,6 @@
     @foreach (var item in Model.Item)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
             <td>
                 @(item.Identifiers.FirstOrDefault(x => x.Type == "Serial Number")?.Value ?? "")
             </td>
