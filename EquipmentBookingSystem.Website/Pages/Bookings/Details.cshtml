@@ -9,255 +9,292 @@
 
 <h1>Details</h1>
 
-<div>
-    <h4>Booking</h4>
-    <hr/>
+<div class="row">
+    <div class="col-12">
 
-    @{
-        // Determine the earliest start and latest end across event and booking
-        var earliestStart = new[] {Model.Booking.BookingStart, Model.Booking.EventStart}.Min();
-        var latestEnd = new[] {Model.Booking.BookingEnd, Model.Booking.EventEnd}.Max();
+        <h4>Booking</h4>
+        <hr/>
 
-        // Calculate total days between earliest start and latest end
-        var span = latestEnd.Date - earliestStart.Date;
-        var totalDays = span.Days;
+        <div class="row">
+            <div class="col-12">
+                @{
+                    // Determine the earliest start and latest end across event and booking
+                    var earliestStart = new[] {Model.Booking.BookingStart, Model.Booking.EventStart}.Min();
+                    var latestEnd = new[] {Model.Booking.BookingEnd, Model.Booking.EventEnd}.Max();
 
-        // Set the minutes per column
-        var minutesPerColumn = 15;
-        var columnsPerHour = 60 / minutesPerColumn;
-        var totalColumns = 24 * columnsPerHour;
+                    // Calculate total days between earliest start and latest end
+                    var span = latestEnd.Date - earliestStart.Date;
+                    var totalDays = span.Days;
 
-        var hourWidth = columnsPerHour + "em";
+                    // Set the minutes per column
+                    var minutesPerColumn = 15;
+                    var columnsPerHour = 60 / minutesPerColumn;
+                    var totalColumns = 24 * columnsPerHour;
 
-        // Loop through each day
-        for (var dayIndex = 0; dayIndex <= totalDays; dayIndex++)
-        {
-            var currentDay = earliestStart.Date.AddDays(dayIndex);
+                    var hourWidth = columnsPerHour + "em";
 
-            // Initialize the start and end times
-            double bookingStartTime = 0, bookingEndTime = 0, eventStartTime = 0, eventEndTime = 0;
-
-            // Adjust the start and end times for bookings on the current day
-            if (currentDay.Date >= Model.Booking.BookingStart.Date && currentDay.Date <= Model.Booking.BookingEnd.Date)
-            {
-                bookingStartTime = currentDay.Date == Model.Booking.BookingStart.Date
-                    ? Model.Booking.BookingStart.TimeOfDay.TotalMinutes
-                    : 0;
-                bookingEndTime = currentDay.Date == Model.Booking.BookingEnd.Date
-                    ? Model.Booking.BookingEnd.TimeOfDay.TotalMinutes
-                    : 24 * 60;
-            }
-
-            // Adjust the start and end times for events on the current day
-            if (currentDay.Date >= Model.Booking.EventStart.Date && currentDay.Date <= Model.Booking.EventEnd.Date)
-            {
-                eventStartTime = currentDay.Date == Model.Booking.EventStart.Date
-                    ? Model.Booking.EventStart.TimeOfDay.TotalMinutes
-                    : 0;
-                eventEndTime = currentDay.Date == Model.Booking.EventEnd.Date
-                    ? Model.Booking.EventEnd.TimeOfDay.TotalMinutes
-                    : 24 * 60;
-            }
-
-            <table style="font-size: small; border-collapse: collapse;">
-                <tr>
-                    <th>@nbsp</th>
-                    @for (var i = 0; i < totalColumns; i += columnsPerHour)
+                    // Loop through each day
+                    for (var dayIndex = 0; dayIndex <= totalDays; dayIndex++)
                     {
-                        <th colspan="@columnsPerHour" style="width:@hourWidth; text-align: left; border:1px solid rgba(128,128,128,0.6);">
-                            @(("" + (i / columnsPerHour)).PadLeft(2, '0')):00
-                        </th>
-                    }
-                </tr>
-                <tr>
-                    <td style="white-space: nowrap;">Booking Day @(dayIndex + 1)</td>
-                    @for (var i = 0; i < totalColumns; i++)
-                    {
-                        <td style="border:1px solid rgba(192,192,192,0.6); @(bookingStartTime <= i * minutesPerColumn && bookingEndTime > i * minutesPerColumn ? "background-color: lightgreen" : "")">@nbsp</td>
-                    }
-                </tr>
-                <tr>
-                    <td style="white-space: nowrap;">Event Day @(dayIndex + 1)</td>
-                    @for (var i = 0; i < totalColumns; i++)
-                    {
-                        <td style="border:1px solid rgba(192,192,192,0.6); @(eventStartTime <= i * minutesPerColumn && eventEndTime > i * minutesPerColumn ? "background-color: lightblue" : "")">@nbsp</td>
-                    }
-                </tr>
-            </table>
-        }
-    }
+                        var currentDay = earliestStart.Date.AddDays(dayIndex);
 
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.BookingStart)
-        </dt>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.EventStart)
-        </dt>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.EventEnd)
-        </dt>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.BookingEnd)
-        </dt>
-    </dl>
-    <dl class="row">
-        <dd class="col-sm-2">
-            @Html.DisplayFor(model => model.Booking.BookingStart)
-        </dd>
-        <dd class="col-sm-2">
-            @Html.DisplayFor(model => model.Booking.EventStart)
-        </dd>
-        <dd class="col-sm-2">
-            @Html.DisplayFor(model => model.Booking.EventEnd)
-        </dd>
-        <dd class="col-sm-2">
-            @Html.DisplayFor(model => model.Booking.BookingEnd)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.BookedBy)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.BookedBy)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.BookedFor)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.BookedFor)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.Notes)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.Notes)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.CreatedDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.CreatedDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.UpdatedDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.UpdatedDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.CreatedBy)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.CreatedBy)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.UpdatedBy)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.UpdatedBy)
-        </dd>
-    </dl>
+                        // Initialize the start and end times
+                        double bookingStartTime = 0, bookingEndTime = 0, eventStartTime = 0, eventEndTime = 0;
+
+                        // Adjust the start and end times for bookings on the current day
+                        if (currentDay.Date >= Model.Booking.BookingStart.Date && currentDay.Date <= Model.Booking.BookingEnd.Date)
+                        {
+                            bookingStartTime = currentDay.Date == Model.Booking.BookingStart.Date
+                                ? Model.Booking.BookingStart.TimeOfDay.TotalMinutes
+                                : 0;
+                            bookingEndTime = currentDay.Date == Model.Booking.BookingEnd.Date
+                                ? Model.Booking.BookingEnd.TimeOfDay.TotalMinutes
+                                : 24 * 60;
+                        }
+
+                        // Adjust the start and end times for events on the current day
+                        if (currentDay.Date >= Model.Booking.EventStart.Date && currentDay.Date <= Model.Booking.EventEnd.Date)
+                        {
+                            eventStartTime = currentDay.Date == Model.Booking.EventStart.Date
+                                ? Model.Booking.EventStart.TimeOfDay.TotalMinutes
+                                : 0;
+                            eventEndTime = currentDay.Date == Model.Booking.EventEnd.Date
+                                ? Model.Booking.EventEnd.TimeOfDay.TotalMinutes
+                                : 24 * 60;
+                        }
+
+                        <table style="font-size: small; border-collapse: collapse;">
+                            <tr>
+                                <th>@nbsp</th>
+                                @for (var i = 0; i < totalColumns; i += columnsPerHour)
+                                {
+                                    <th colspan="@columnsPerHour" style="width:@hourWidth; text-align: left; border:1px solid rgba(128,128,128,0.6);">
+                                        @(("" + (i / columnsPerHour)).PadLeft(2, '0')):00
+                                    </th>
+                                }
+                            </tr>
+                            <tr>
+                                <td style="white-space: nowrap;">Booking Day @(dayIndex + 1)</td>
+                                @for (var i = 0; i < totalColumns; i++)
+                                {
+                                    <td style="border:1px solid rgba(192,192,192,0.6); @(bookingStartTime < (i + 1) * minutesPerColumn && bookingEndTime > (i) * minutesPerColumn ? "background-color: lightgreen" : "")">@nbsp</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td style="white-space: nowrap;">Event Day @(dayIndex + 1)</td>
+                                @for (var i = 0; i < totalColumns; i++)
+                                {
+                                    <td style="border:1px solid rgba(192,192,192,0.6); @(eventStartTime < (i + 1) * minutesPerColumn && eventEndTime > (i) * minutesPerColumn ? "background-color: lightblue" : "")">@nbsp</td>
+                                }
+                            </tr>
+                        </table>
+                    }
+                }
+            </div>
+        </div>
+
+        <br/>
+        <br/>
+
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.BookingStart)
+            </dt>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.EventStart)
+            </dt>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.EventEnd)
+            </dt>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.BookingEnd)
+            </dt>
+        </dl>
+        <dl class="row">
+            <dd class="col-sm-2">
+                @Html.DisplayFor(model => model.Booking.BookingStart)
+            </dd>
+            <dd class="col-sm-2">
+                @Html.DisplayFor(model => model.Booking.EventStart)
+            </dd>
+            <dd class="col-sm-2">
+                @Html.DisplayFor(model => model.Booking.EventEnd)
+            </dd>
+            <dd class="col-sm-2">
+                @Html.DisplayFor(model => model.Booking.BookingEnd)
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.BookedBy)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Booking.BookedBy)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.BookedFor)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Booking.BookedFor)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.Notes)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Booking.Notes)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.Items)
+            </dt>
+            <dd class="col-sm-10">
+                @* @Html.DisplayFor(model => model.Booking.Items) *@
+                @if (Model.Booking.Items.Any())
+                {
+                    <ol>
+                        @foreach (var item in Model.Booking.Items.OrderBy(i => i.Name))
+                        {
+                            <li>
+                                <a asp-area="" asp-page="/Items/Details" asp-route-id="@item.Id">
+                                    @item.DisplayName()
+                                </a>
+                            </li>
+                        }
+                    </ol>
+                }
+                else
+                {
+                    <span>No items</span>
+                }
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.CreatedDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Booking.CreatedDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.UpdatedDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Booking.UpdatedDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.CreatedBy)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Booking.CreatedBy)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Booking.UpdatedBy)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Booking.UpdatedBy)
+            </dd>
+        </dl>
+
+        <div>
+            <a asp-page="./Edit" asp-route-id="@Model.Booking.Id">Edit</a> |
+            <a asp-page="./Index">Back to List</a>
+        </div>
+
+    </div>
 </div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.Booking.Id">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
-</div>
 
 <br/>
 <br/>
 <br/>
 
-<div>
-    <h4>Audit Changes</h4>
-    <hr/>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>
-                Property
-            </th>
-            <th>
-                Old Value
-            </th>
-            <th>
-                New Value
-            </th>
-            <th>
-                Changed By
-            </th>
-            <th>
-                Timestamp (UTC)
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        @if (Model.Changes.Any())
-        {
-            @foreach (var audit in Model.Changes.OrderByDescending(a => a.ChangeTimeUtc))
-            {
-                <tr>
-                    <td>
-                        @audit.PropertyName
-                    </td>
-                    <td>
-                        @if (audit.OldValue is null)
-                        {
-                            <text>No value (null)</text>
-                        }
-                        else if (string.Empty.Equals(audit.OldValue))
-                        {
-                            <text>No value (empty)</text>
-                        }
-                        else
-                        {
-                            @audit.OldValue
-                        }
-                    </td>
-                    <td>
-                        @if (audit.NewValue is null)
-                        {
-                            <text>No value (null)</text>
-                        }
-                        else if (string.Empty.Equals(audit.NewValue))
-                        {
-                            <text>No value (empty)</text>
-                        }
-                        else
-                        {
-                            @audit.NewValue
-                        }
-                    </td>
-                    <td>
-                        @if(audit.UserEmail is null)
-                        {
-                            <text>No value (null)</text>
-                        }
-                        else if(string.Empty.Equals(audit.UserEmail))
-                        {
-                            <text>No value (empty)</text>
-                        }
-                        else
-                        {
-                            @audit.UserEmail
-                        }
-                    </td>
-                    <td>
-                        @audit.ChangeTimeUtc
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
+<div class="row">
+    <div class="col-12">
+        <h4>Audit Changes</h4>
+        <hr/>
+        <table class="table">
+            <thead>
             <tr>
-                <td colspan="50">No changes found</td>
+                <th>
+                    Property
+                </th>
+                <th>
+                    Old Value
+                </th>
+                <th>
+                    New Value
+                </th>
+                <th>
+                    Changed By
+                </th>
+                <th>
+                    Timestamp (UTC)
+                </th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @if (Model.Changes.Any())
+            {
+                @foreach (var audit in Model.Changes.OrderByDescending(a => a.ChangeTimeUtc))
+                {
+                    <tr>
+                        <td>
+                            @audit.PropertyName
+                        </td>
+                        <td>
+                            @if (audit.OldValue is null)
+                            {
+                                <text>No value (null)</text>
+                            }
+                            else if (string.Empty.Equals(audit.OldValue))
+                            {
+                                <text>No value (empty)</text>
+                            }
+                            else
+                            {
+                                @audit.OldValue
+                            }
+                        </td>
+                        <td>
+                            @if (audit.NewValue is null)
+                            {
+                                <text>No value (null)</text>
+                            }
+                            else if (string.Empty.Equals(audit.NewValue))
+                            {
+                                <text>No value (empty)</text>
+                            }
+                            else
+                            {
+                                @audit.NewValue
+                            }
+                        </td>
+                        <td>
+                            @if (audit.UserEmail is null)
+                            {
+                                <text>No value (null)</text>
+                            }
+                            else if (string.Empty.Equals(audit.UserEmail))
+                            {
+                                <text>No value (empty)</text>
+                            }
+                            else
+                            {
+                                @audit.UserEmail
+                            }
+                        </td>
+                        <td>
+                            @audit.ChangeTimeUtc
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="50">No changes found</td>
+                </tr>
+            }
+            </tbody>
+        </table>
 
+    </div>
 </div>

@@ -1,8 +1,10 @@
 @page "{id:guid}"
+@using Humanizer
 @model EquipmentBookingSystem.Website.Pages.Items.DetailsModel
 
 @{
     ViewData["Title"] = "Details";
+    var nbsp = Html.Raw("&nbsp;");
 }
 
 <h1>Details</h1>
@@ -52,93 +54,193 @@
 <br/>
 <br/>
 
-<div>
-    <h4>Audit Changes</h4>
-    <hr/>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>
-                Property
-            </th>
-            <th>
-                Old Value
-            </th>
-            <th>
-                New Value
-            </th>
-            <th>
-                Changed By
-            </th>
-            <th>
-                Timestamp (UTC)
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        @if (Model.Changes.Any())
+<div class="row">
+    <div class="col-12">
+        <h4>Bookings</h4>
+        <hr/>
+        @if (Model.Item.Bookings.Any())
         {
-            @foreach (var audit in Model.Changes.OrderByDescending(a => a.ChangeTimeUtc))
-            {
-                <tr>
-                    <td>
-                        @audit.PropertyName
-                    </td>
-                    <td>
-                        @if (audit.OldValue is null)
+            <div class="row">
+                <div class="col-12">
+                    <ol>
+                        @foreach (var booking in Model.Item.Bookings.OrderBy(i => i.BookingStart))
                         {
-                            <text>No value (null)</text>
+                            // duration
+                            var duration = booking.BookingEnd - booking.BookingStart;
+
+                            <li>
+                                @Html.DisplayFor(model => booking.BookingStart) - @Html.DisplayFor(model => booking.BookingEnd)
+                                for @Html.DisplayFor(model => booking.BookedFor)
+                                <small>(approx. @duration.Humanize(2))</small>
+                                -
+                                <a asp-area="" asp-page="/Bookings/Details" asp-route-id="@booking.Id">view</a>
+                            </li>
                         }
-                        else if (string.Empty.Equals(audit.OldValue))
+                    </ol>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+
+                    @{
+                        // Determine the earliest start and latest end across event and booking
+                        var earliestStart = Model.Item.Bookings.Select(b => b.EventStart).Min();
+                        var latestEnd = Model.Item.Bookings.Select(b => b.EventEnd).Max();
+
+                        // Calculate total days between earliest start and latest end
+                        var span = latestEnd.Date - earliestStart.Date;
+                        var totalDays = span.Days;
+
+                        // Set the minutes per column
+                        var minutesPerColumn = 15;
+                        var columnsPerHour = 60 / minutesPerColumn;
+                        var totalColumns = 24 * columnsPerHour;
+
+                        var hourWidth = columnsPerHour + "em";
+
+                        // Loop through each day
+                        for (var dayIndex = 0; dayIndex <= totalDays; dayIndex++)
                         {
-                            <text>No value (empty)</text>
+                            var currentDay = earliestStart.Date.AddDays(dayIndex);
+
+                            <table style="font-size: small; border-collapse: collapse;">
+                                <tr>
+                                    <th style="text-align: right; white-space: nowrap; width: 10em;">
+                                        @currentDay.ToString("ddd dd/MM/yyyy")
+                                        <br/>
+                                        (<small>@currentDay.Humanize()</small>)
+                                    </th>
+                                    @for (var i = 0; i < totalColumns; i += columnsPerHour)
+                                    {
+                                        <th colspan="@columnsPerHour"
+                                            style="width:@hourWidth; text-align: left; border:1px solid rgba(128,128,128,0.6);">
+                                            @(("" + (i / columnsPerHour)).PadLeft(2, '0')):00
+                                        </th>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right; white-space: nowrap;">Booking</td>
+                                    @for (var i = 0; i < totalColumns; i++)
+                                    {
+                                        // if current time covers any booking time, highlight the cell
+                                        var isInBooking = Model.Item.Bookings.Any(b => b.BookingStart < currentDay.AddMinutes((i + 1) * minutesPerColumn) && b.BookingEnd > currentDay.AddMinutes((i) * minutesPerColumn));
+                                        <td style="border:1px solid rgba(192,192,192,0.6); @(isInBooking ? "background-color: lightgreen" : "")">@nbsp</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right; white-space: nowrap;">Event</td>
+                                    @for (var i = 0; i < totalColumns; i++)
+                                    {
+                                        // if current time covers any event time, highlight the cell
+                                        var isInEvent = Model.Item.Bookings.Any(b => b.EventStart < currentDay.AddMinutes((i + 1) * minutesPerColumn) && b.EventEnd > currentDay.AddMinutes((i) * minutesPerColumn));
+                                        <td style="border:1px solid rgba(192,192,192,0.6); @(isInEvent ? "background-color: lightblue" : "")">@nbsp</td>
+                                    }
+                                </tr>
+                            </table>
                         }
-                        else
-                        {
-                            @audit.OldValue
-                        }
-                    </td>
-                    <td>
-                        @if (audit.NewValue is null)
-                        {
-                            <text>No value (null)</text>
-                        }
-                        else if (string.Empty.Equals(audit.NewValue))
-                        {
-                            <text>No value (empty)</text>
-                        }
-                        else
-                        {
-                            @audit.NewValue
-                        }
-                    </td>
-                    <td>
-                        @if (audit.UserEmail is null)
-                        {
-                            <text>No value (null)</text>
-                        }
-                        else if (string.Empty.Equals(audit.UserEmail))
-                        {
-                            <text>No value (empty)</text>
-                        }
-                        else
-                        {
-                            @audit.UserEmail
-                        }
-                    </td>
-                    <td>
-                        @audit.ChangeTimeUtc
-                    </td>
-                </tr>
-            }
+                    }
+                </div>
+            </div>
         }
         else
         {
-            <tr>
-                <td colspan="50">No changes found</td>
-            </tr>
+            <span>No items</span>
         }
-        </tbody>
-    </table>
+    </div>
+</div>
 
+<br/>
+<br/>
+
+<div class="row">
+    <div class="col-12">
+        <h4>Audit Changes</h4>
+        <hr/>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    Property
+                </th>
+                <th>
+                    Old Value
+                </th>
+                <th>
+                    New Value
+                </th>
+                <th>
+                    Changed By
+                </th>
+                <th>
+                    Timestamp (UTC)
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (Model.Changes.Any())
+            {
+                @foreach (var audit in Model.Changes.OrderByDescending(a => a.ChangeTimeUtc))
+                {
+                    <tr>
+                        <td>
+                            @audit.PropertyName
+                        </td>
+                        <td>
+                            @if (audit.OldValue is null)
+                            {
+                                <text>No value (null)</text>
+                            }
+                            else if (string.Empty.Equals(audit.OldValue))
+                            {
+                                <text>No value (empty)</text>
+                            }
+                            else
+                            {
+                                @audit.OldValue
+                            }
+                        </td>
+                        <td>
+                            @if (audit.NewValue is null)
+                            {
+                                <text>No value (null)</text>
+                            }
+                            else if (string.Empty.Equals(audit.NewValue))
+                            {
+                                <text>No value (empty)</text>
+                            }
+                            else
+                            {
+                                @audit.NewValue
+                            }
+                        </td>
+                        <td>
+                            @if (audit.UserEmail is null)
+                            {
+                                <text>No value (null)</text>
+                            }
+                            else if (string.Empty.Equals(audit.UserEmail))
+                            {
+                                <text>No value (empty)</text>
+                            }
+                            else
+                            {
+                                @audit.UserEmail
+                            }
+                        </td>
+                        <td>
+                            @audit.ChangeTimeUtc
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="50">No changes found</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+    </div>
 </div>

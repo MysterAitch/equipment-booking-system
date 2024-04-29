@@ -6,4 +6,10 @@ public class Item : BaseEntity
     public string Name { get; set; } = string.Empty;
 
     public HashSet<Booking> Bookings { get; set; } = new();
+
+    public virtual string DisplayName()
+    {
+        // return $"{Name} ({Id})";
+        return $"{Name}";
+    }
 }

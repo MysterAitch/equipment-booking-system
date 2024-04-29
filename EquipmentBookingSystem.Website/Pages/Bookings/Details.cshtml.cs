@@ -25,7 +25,9 @@ public class DetailsModel : PageModel
             return NotFound();
         }
 
-        var booking = await _context.Booking.FirstOrDefaultAsync(m => m.Id == id);
+        var booking = await _context.Booking
+            .Include(b => b.Items)
+            .FirstOrDefaultAsync(m => m.Id == id);
         if (booking == null)
         {
             return NotFound();
