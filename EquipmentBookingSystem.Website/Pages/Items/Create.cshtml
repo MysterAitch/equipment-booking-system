@@ -19,6 +19,16 @@
                 <span asp-validation-for="Item.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Item.Manufacturer" class="control-label"></label>
+                <input asp-for="Item.Manufacturer" class="form-control" />
+                <span asp-validation-for="Item.Manufacturer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Item.Model" class="control-label"></label>
+                <input asp-for="Item.Model" class="form-control" />
+                <span asp-validation-for="Item.Model" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

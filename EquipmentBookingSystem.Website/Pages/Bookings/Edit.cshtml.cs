@@ -32,6 +32,7 @@ public class EditModel : PageModel
 
         var booking = await _context.Booking
             .Include(b => b.Items)
+            .ThenInclude(i => i.Identifiers)
             .FirstOrDefaultAsync(m => m.Id == id);
         if (booking == null)
         {
@@ -40,7 +41,10 @@ public class EditModel : PageModel
 
         Booking = booking;
 
-        Items = await _context.Item.ToListAsync();
+        Items = await _context.Item
+            .Include(i => i.Bookings)
+            .Include(i => i.Identifiers)
+            .ToListAsync();
         Options = Items.Select(s => new CheckBoxListItem()
         {
             Id = s.Id,
@@ -55,7 +59,10 @@ public class EditModel : PageModel
     // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task<IActionResult> OnPostAsync(List<Guid> selectedOptions)
     {
-        Items = await _context.Item.ToListAsync();
+        Items = await _context.Item
+            .Include(i => i.Bookings)
+            .Include(i => i.Identifiers)
+            .ToListAsync();
 
         if (!ModelState.IsValid)
         {
@@ -71,6 +78,7 @@ public class EditModel : PageModel
 
         var oldBooking = await _context.Booking
             .Include(b => b.Items)
+            .ThenInclude(i => i.Identifiers)
             .SingleOrDefaultAsync(m => m.Id == Booking.Id);
         if (oldBooking == null)
         {

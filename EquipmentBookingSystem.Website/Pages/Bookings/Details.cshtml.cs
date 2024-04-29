@@ -27,6 +27,7 @@ public class DetailsModel : PageModel
 
         var booking = await _context.Booking
             .Include(b => b.Items)
+            .ThenInclude(i => i.Identifiers)
             .FirstOrDefaultAsync(m => m.Id == id);
         if (booking == null)
         {

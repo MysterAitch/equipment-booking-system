@@ -79,6 +79,9 @@ dotnet ef migrations add AddAuditTableEntityId
 ```shell
 dotnet ef migrations add AddAuditTableEntityIdNullable
 ```
+```shell
+dotnet ef migrations add AddItemIdentifiers
+```
 
 ## Update the database
 

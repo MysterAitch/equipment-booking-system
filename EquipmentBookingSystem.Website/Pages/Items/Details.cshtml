@@ -20,6 +20,66 @@
             @Html.DisplayFor(model => model.Item.Name)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Item.Identifiers)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Item.Identifiers.Any())
+            {
+                <ul>
+                    @foreach (var identifier in Model.Item.Identifiers)
+                    {
+                        <li>
+                            <span>@Html.DisplayFor(model => identifier.Type)</span>:
+                            <code>@Html.DisplayFor(model => identifier.Value)</code>
+                            <small>
+                                (
+                                <span>@Html.DisplayFor(model => identifier.From)</span>
+                                -
+                                <span>@Html.DisplayFor(model => identifier.To)</span>
+                                )
+                            </small>
+                        </li>
+                    }
+                </ul>
+
+                @* <dl class="row"> *@
+                @*     @foreach (var identifier in Model.Item.Identifiers) *@
+                @*     { *@
+                @*         <dt class="col-2"> *@
+                @*             @Html.DisplayFor(model => identifier.Type) *@
+                @*         </dt> *@
+                @*         <dd class="col-9"> *@
+                @*             <code>@Html.DisplayFor(model => identifier.Value)</code> *@
+                @*             <small> *@
+                @*                 ( *@
+                @*                 <span>@Html.DisplayFor(model => identifier.From)</span> *@
+                @*                 - *@
+                @*                 <span>@Html.DisplayFor(model => identifier.To)</span> *@
+                @*                 ) *@
+                @*             </small> *@
+                @*         </dd> *@
+                @*     } *@
+                @* </dl> *@
+            }
+            else
+            {
+                <span>No identifiers</span>
+            }
+            @* @Html.DisplayFor(model => model.Item.Identifiers) *@
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Item.Manufacturer)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Item.Manufacturer)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Item.Model)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Item.Model)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Item.CreatedDate)
         </dt>
         <dd class="col-sm-10">

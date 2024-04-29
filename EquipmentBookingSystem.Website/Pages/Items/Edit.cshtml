@@ -8,26 +8,121 @@
 <h1>Edit</h1>
 
 <h4>Item</h4>
-<hr />
+<hr/>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-12">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div asp-validation-summary="All" class="text-danger"></div>
-            <input type="hidden" asp-for="Item.Id" />
-            <div class="form-group">
-                <label asp-for="Item.Name" class="control-label"></label>
-                <input asp-for="Item.Name" class="form-control" />
-                <span asp-validation-for="Item.Name" class="text-danger"></span>
+            <input type="hidden" asp-for="Item.Id"/>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group" id="identifiers">
+
+                        @for(int i = 0; i < Model.OrderedIdentifiers.Count; i++)
+                        {
+                            <div class="identifier-block form-group">
+                                @* Only include the Id value here for pre-existing values *@
+                                <input asp-for="@Model.OrderedIdentifiers[i].Id" type="hidden"/>
+
+                                <label asp-for="@Model.OrderedIdentifiers[i].Type" class="control-label">Type</label>
+                                <input asp-for="@Model.OrderedIdentifiers[i].Type" class="form-control"/>
+                                <span asp-validation-for="@Model.OrderedIdentifiers[i].Type" class="text-danger"></span>
+
+                                <label asp-for="@Model.OrderedIdentifiers[i].Value" class="control-label">Value</label>
+                                <input asp-for="@Model.OrderedIdentifiers[i].Value" class="form-control"/>
+                                <span asp-validation-for="@Model.OrderedIdentifiers[i].Value" class="text-danger"></span>
+
+                                <label asp-for="@Model.OrderedIdentifiers[i].From" class="control-label">From</label>
+                                <input asp-for="@Model.OrderedIdentifiers[i].From" class="form-control"/>
+                                <span asp-validation-for="@Model.OrderedIdentifiers[i].From" class="text-danger"></span>
+
+                                <label asp-for="@Model.OrderedIdentifiers[i].To" class="control-label">To</label>
+                                <input asp-for="@Model.OrderedIdentifiers[i].To" class="form-control"/>
+                                <span asp-validation-for="@Model.OrderedIdentifiers[i].To" class="text-danger"></span>
+
+                                <button type="button" class="btn btn-danger" onclick="removeIdentifier(this)">Remove Identifier</button>
+                            </div>
+                        }
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addIdentifier()">Add Identifier</button>
+
+                    <script>
+                        function addIdentifier() {
+                            const idBlock = document.createElement('div');
+                            idBlock.className = 'identifier-block form-group';
+
+                            const existingCount = document.getElementById('identifiers')
+                                .querySelectorAll('.identifier-block')
+                                .length;
+
+                            const createInputField = (name) => {
+                                const label = document.createElement('label');
+                                label.textContent = `${name.charAt(0).toUpperCase()}${name.slice(1)}:`;
+
+                                // Deliberately do not handle the ID value here, as this should be a new value
+                                const idInput = document.createElement('input');
+                                idInput.type = name === 'From' || name === 'To' ? 'date' : 'text';
+                                idInput.name = `OrderedIdentifiers[${existingCount}].${name}`; // this format helps to bind array of inputs on the server side
+                                idInput.className = 'form-control';
+
+                                idBlock.appendChild(label);
+                                idBlock.appendChild(idInput);
+                            };
+
+                            ['Type', 'Value', 'From', 'To'].forEach(createInputField);
+
+                            const idButton = document.createElement('button');
+                            idButton.type = 'button';
+                            idButton.innerText = 'Remove';
+                            idButton.className = 'btn btn-danger';
+                            idButton.onclick = function() {
+                                removeIdentifier(this);
+                            };
+
+                            idBlock.appendChild(idButton);
+
+                            document.getElementById('identifiers').appendChild(idBlock);
+                        }
+
+                        function removeIdentifier(button) {
+                            const idBlock = button.parentNode;
+                            idBlock.parentNode.removeChild(idBlock);
+                        }
+                    </script>
+
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="row">
+                <div class="col-md-4">
+
+                    <div class="form-group">
+                        <label asp-for="Item.Name" class="control-label"></label>
+                        <input asp-for="Item.Name" class="form-control"/>
+                        <span asp-validation-for="Item.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Item.Manufacturer" class="control-label"></label>
+                        <input asp-for="Item.Manufacturer" class="form-control"/>
+                        <span asp-validation-for="Item.Manufacturer" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Item.Model" class="control-label"></label>
+                        <input asp-for="Item.Model" class="form-control"/>
+                        <span asp-validation-for="Item.Model" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary"/>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
 <div>
+    <a asp-page="./Details" asp-route-id="@Model.Item.Id">Back to item details</a> |
     <a asp-page="./Index">Back to List</a>
 </div>
-

@@ -20,6 +20,8 @@ public class WebsiteDbContext : DbContext
 
     public DbSet<EquipmentBookingSystem.Website.Models.Booking> Booking { get; set; } = default!;
 
+    public DbSet<EquipmentBookingSystem.Website.Models.ItemIdentifier> ItemIdentifiers { get; set; } = default!;
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,6 +32,10 @@ public class WebsiteDbContext : DbContext
         modelBuilder.Entity<Booking>()
             .HasMany(b => b.Items)
             .WithMany(i => i.Bookings);
+
+        modelBuilder.Entity<ItemIdentifier>()
+            .HasMany(i => i.Items)
+            .WithMany(i => i.Identifiers);
     }
 
     public void AuditEntryForChanges()
@@ -48,7 +54,8 @@ public class WebsiteDbContext : DbContext
             {
                 Item item => item.Id,
                 Booking booking => booking.Id,
-                _ => throw new Exception()
+                ItemIdentifier itemIdentifier => itemIdentifier.Id,
+                _ => throw new Exception("unrecognised item type: " + changedEntity.Entity.GetType().Name + " in AuditEntryForChanges()")
             };
 
             var databaseValues = changedEntity.GetDatabaseValues();
@@ -88,6 +95,7 @@ public class WebsiteDbContext : DbContext
 
                 this.Audits.Add(audit);
             }
+
         }
     }
 

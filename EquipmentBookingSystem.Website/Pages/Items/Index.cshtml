@@ -1,4 +1,5 @@
 @page
+@using Humanizer
 @model EquipmentBookingSystem.Website.Pages.Items.IndexModel
 
 @{
@@ -12,37 +13,93 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Item[0].Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Item[0].CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Item[0].UpdatedDate)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Item[0].Name)
+        </th>
+        <th>
+            Serial Number
+        </th>
+        <th>
+            ProCloud Asset ID
+        </th>
+        <th>
+            Call Sign
+        </th>
+        <th>
+            ISSI
+        </th>
+        <th>
+            All Identifiers
+        </th>
+        <th>
+            Next Booking
+        </th>
+        <th>Actions</th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Item) {
+    @foreach (var item in Model.Item)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
+                @(item.Identifiers.FirstOrDefault(x => x.Type == "Serial Number")?.Value ?? "")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UpdatedDate)
+                @(item.Identifiers.FirstOrDefault(x => x.Type == "ProCloud Asset ID")?.Value ?? "")
             </td>
+            <td>
+                @(item.Identifiers.FirstOrDefault(x => x.Type == "Call Sign")?.Value ?? "")
+            </td>
+            <td>
+                @(item.Identifiers.FirstOrDefault(x => x.Type == "ISSI")?.Value ?? "")
+            </td>
+            <td>
+                <ul>
+                    @foreach (var identifier in item.Identifiers)
+                    {
+                        <li>@identifier.Type: @identifier.Value</li>
+                    }
+                </ul>
+            </td>
+
+            <td>
+                @{
+                    var futureBookings = item.Bookings
+                        .Where(x => x.BookingStart > DateTime.Now)
+                        .OrderBy(x => x.BookingStart)
+                        .ToList();
+                }
+                @if (futureBookings.Any())
+                {
+                    var nextBooking = futureBookings.First();
+                    var duration = nextBooking.BookingEnd - nextBooking.BookingStart;
+                    <span>
+                        <a asp-area="" asp-page="/Bookings/Details" asp-route-id="@nextBooking.Id">
+                            @nextBooking.BookingStart.ToString("ddd dd/MM/yyyy") to @nextBooking.BookingEnd.ToString("ddd dd/MM/yyyy")
+                        </a>
+                        <br/>
+                        <small>(approx. @duration.Humanize(2))</small>
+                        <br/>
+                        <small>for @nextBooking.BookedFor</small>
+                    </span>
+
+                }
+                else
+                {
+                    <small>No upcoming bookings</small>
+                }
+            </td>
+
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

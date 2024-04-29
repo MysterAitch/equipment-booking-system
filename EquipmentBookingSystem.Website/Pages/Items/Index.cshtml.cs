@@ -17,6 +17,9 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        Item = await _context.Item.ToListAsync();
+        Item = await _context.Item
+            .Include(i => i.Bookings)
+            .Include(i => i.Identifiers)
+            .ToListAsync();
     }
 }
