@@ -85,6 +85,9 @@ dotnet ef migrations add AddAuditTableEntityIdNullable
 ```shell
 dotnet user-secrets set "ConnectionStrings:WebsiteDbContext" "Server=tcp:equipment-booking-system.database.windows.net,1433;Initial Catalog=equipment-booking-system-database;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication='Active Directory Default';"
 ```
+```shell
+dotnet user-secrets set "ConnectionStrings:WebsiteDbContext" "Server=tcp:equipment-booking-system.database.windows.net,1433;Initial Catalog=equipment-booking-system-database-dev;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication='Active Directory Default';"
+```
 
 Note, requires az cli if using Azure AD authentication (e.g., locally)
 
