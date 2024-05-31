@@ -24,6 +24,6 @@ public class Item : BaseEntity
 
     public virtual string DisplayName()
     {
-        return $"{CallSign} (@{Issi}";
+        return $"{CallSign?.Value} / {Issi?.Value} ({SerialNumber?.Value})";
     }
 }

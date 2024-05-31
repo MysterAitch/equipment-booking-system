@@ -101,6 +101,33 @@ Note, requires az cli if using Azure AD authentication (e.g., locally)
 dotnet ef database update
 ```
 
+Check for pending updates -- TODO: Include this in a deployment pipeline (note: would need database credentials adding to the action)
+    
+```shell
+dotnet ef migrations list | grep "(Pending)"
+```
+
+```shell
+dotnet ef migrations list | Select-String "(Pending)"
+```
+
+```shell
+try {
+    $matches = dotnet ef migrations list | Select-String "(Pending)$"
+    if ($matches.Count -gt 0) {
+        Write-Host "There are pending migrations"
+        exit 1
+    } else {
+        Write-Host "There are no pending migrations"
+        exit 0
+    }
+}
+catch {
+    Write-Host "An error occurred executing 'dotnet ef migrations list'. Please check your environment"
+    exit 2
+}
+```
+
 
 
 ## Azure Web App Configuration
