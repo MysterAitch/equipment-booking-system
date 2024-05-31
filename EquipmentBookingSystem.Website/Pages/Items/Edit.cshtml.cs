@@ -51,7 +51,7 @@ public class EditModel : PageModel
                 Id = Guid.NewGuid(),
                 Type = "Serial Number",
                 Value = string.Empty,
-                From = null,
+                From = DateTime.Today,
                 To = null,
             });
 
@@ -60,7 +60,7 @@ public class EditModel : PageModel
                 Id = Guid.NewGuid(),
                 Type = "ProCloud Asset ID",
                 Value = string.Empty,
-                From = null,
+                From = DateTime.Today,
                 To = null,
             });
 
@@ -69,7 +69,7 @@ public class EditModel : PageModel
                 Id = Guid.NewGuid(),
                 Type = "Call Sign",
                 Value = string.Empty,
-                From = null,
+                From = DateTime.Today,
                 To = null,
             });
 
@@ -78,7 +78,7 @@ public class EditModel : PageModel
                 Id = Guid.NewGuid(),
                 Type = "ISSI",
                 Value = string.Empty,
-                From = null,
+                From = DateTime.Today,
                 To = null,
             });
         }
@@ -136,6 +136,7 @@ public class EditModel : PageModel
         {
             if (oldIdentifiers.All(i => i.Id != orderedIdentifier.Id))
             {
+                // This is a new identifier, not previously seen -- therefore add it
                 var itemIdentifier = new ItemIdentifier()
                 {
                     Id = Guid.Empty == orderedIdentifier.Id ? Guid.NewGuid() : orderedIdentifier.Id,

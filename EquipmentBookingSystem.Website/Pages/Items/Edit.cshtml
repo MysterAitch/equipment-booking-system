@@ -67,6 +67,11 @@
                                 idInput.name = `OrderedIdentifiers[${existingCount}].${name}`; // this format helps to bind array of inputs on the server side
                                 idInput.className = 'form-control';
 
+                                if(name === "From") {
+                                    // set today's date
+                                    idInput.value = new Date().toISOString().split('T')[0];
+                                }
+
                                 idBlock.appendChild(label);
                                 idBlock.appendChild(idInput);
                             };

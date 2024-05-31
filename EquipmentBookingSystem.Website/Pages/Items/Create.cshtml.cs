@@ -37,6 +37,6 @@ public class CreateModel : PageModel
         _context.Item.Add(Item);
         await _context.SaveChangesAsync();
 
-        return RedirectToPage("./Index");
+        return RedirectToPage("./Edit", new { id = Item.Id });
     }
 }
