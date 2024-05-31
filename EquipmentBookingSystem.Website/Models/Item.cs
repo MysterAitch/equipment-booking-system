@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace EquipmentBookingSystem.Website.Models;
 
 public class Item : BaseEntity
@@ -11,6 +13,14 @@ public class Item : BaseEntity
     public HashSet<Booking> Bookings { get; set; } = new();
 
     public HashSet<ItemIdentifier> Identifiers { get; set; } = new();
+
+    [Display(Name = "Damage Notes")]
+    [DataType(DataType.MultilineText)]
+    public String? DamageNotes { get; set; } = string.Empty;
+
+    [Display(Name = "Notes")]
+    [DataType(DataType.MultilineText)]
+    public String? Notes { get; set; } = string.Empty;
 
 
     public ItemIdentifier? SerialNumber => Identifiers.FirstOrDefault(i => i.Type == "Serial Number") ?? null;

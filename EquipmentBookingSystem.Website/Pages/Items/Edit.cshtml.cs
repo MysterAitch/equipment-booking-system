@@ -113,6 +113,8 @@ public class EditModel : PageModel
 
         oldItem.Manufacturer = Item.Manufacturer;
         oldItem.Model = Item.Model;
+        oldItem.DamageNotes = Item.DamageNotes;
+        oldItem.Notes = Item.Notes;
 
         // Update oldIdentifiers -- update where Id matches, remove where not in OrderedIdentifiers, and add where not in oldIdentifiers (inserting Id)
         var oldIdentifiers = oldItem.Identifiers.ToList();

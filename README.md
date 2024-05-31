@@ -85,6 +85,9 @@ dotnet ef migrations add AddItemIdentifiers
 ```shell
 dotnet ef migrations add RemoveItemName
 ```
+```shell
+dotnet ef migrations add AddItemNotes
+```
 
 ## Update the database
 

@@ -22,31 +22,49 @@
 
                         @for(int i = 0; i < Model.OrderedIdentifiers.Count; i++)
                         {
-                            <div class="identifier-block form-group">
+                            <div class="identifier-block form-group mb-4">
                                 @* Only include the Id value here for pre-existing values *@
                                 <input asp-for="@Model.OrderedIdentifiers[i].Id" type="hidden"/>
 
-                                <label asp-for="@Model.OrderedIdentifiers[i].Type" class="control-label">Type</label>
-                                <input asp-for="@Model.OrderedIdentifiers[i].Type" class="form-control"/>
-                                <span asp-validation-for="@Model.OrderedIdentifiers[i].Type" class="text-danger"></span>
+                                @*Two columns*@
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label asp-for="@Model.OrderedIdentifiers[i].Type" class="control-label">Type</label>
+                                        <input asp-for="@Model.OrderedIdentifiers[i].Type" class="form-control"/>
+                                        <span asp-validation-for="@Model.OrderedIdentifiers[i].Type" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label asp-for="@Model.OrderedIdentifiers[i].Value" class="control-label">Value</label>
+                                        <input asp-for="@Model.OrderedIdentifiers[i].Value" class="form-control"/>
+                                        <span asp-validation-for="@Model.OrderedIdentifiers[i].Value" class="text-danger"></span>
+                                    </div>
+                                </div>
 
-                                <label asp-for="@Model.OrderedIdentifiers[i].Value" class="control-label">Value</label>
-                                <input asp-for="@Model.OrderedIdentifiers[i].Value" class="form-control"/>
-                                <span asp-validation-for="@Model.OrderedIdentifiers[i].Value" class="text-danger"></span>
-
-                                <label asp-for="@Model.OrderedIdentifiers[i].From" class="control-label">From</label>
-                                <input asp-for="@Model.OrderedIdentifiers[i].From" class="form-control"/>
-                                <span asp-validation-for="@Model.OrderedIdentifiers[i].From" class="text-danger"></span>
-
-                                <label asp-for="@Model.OrderedIdentifiers[i].To" class="control-label">To</label>
-                                <input asp-for="@Model.OrderedIdentifiers[i].To" class="form-control"/>
-                                <span asp-validation-for="@Model.OrderedIdentifiers[i].To" class="text-danger"></span>
-
-                                <button type="button" class="btn btn-danger" onclick="removeIdentifier(this)">Remove Identifier</button>
+                                @*three columns*@
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label asp-for="@Model.OrderedIdentifiers[i].From" class="control-label">From</label>
+                                        <input asp-for="@Model.OrderedIdentifiers[i].From" class="form-control"/>
+                                        <span asp-validation-for="@Model.OrderedIdentifiers[i].From" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="@Model.OrderedIdentifiers[i].To" class="control-label">To</label>
+                                        <input asp-for="@Model.OrderedIdentifiers[i].To" class="form-control"/>
+                                        <span asp-validation-for="@Model.OrderedIdentifiers[i].To" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="button" class="btn btn-danger" onclick="removeIdentifier(this)">Remove Identifier</button>
+                                    </div>
+                                </div>
                             </div>
                         }
                     </div>
-                    <button type="button" class="btn btn-secondary" onclick="addIdentifier()">Add Identifier</button>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-secondary" onclick="addIdentifier()">Add Identifier</button>
+                        </div>
+                    </div>
 
                     <script>
                         function addIdentifier() {
@@ -92,15 +110,19 @@
                         }
 
                         function removeIdentifier(button) {
-                            const idBlock = button.parentNode;
-                            idBlock.parentNode.removeChild(idBlock);
+                            // first ancestor with class identifier-block
+                            const containerBlock = button.closest('.identifier-block');
+
+                            // remove container element from it's parent
+                            const idBlock = containerBlock.parentNode;
+                            idBlock.removeChild(containerBlock);
                         }
                     </script>
 
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row mt-4">
                 <div class="col-md-4">
 
                     <div class="form-group">
@@ -113,6 +135,24 @@
                         <input asp-for="Item.Model" class="form-control"/>
                         <span asp-validation-for="Item.Model" class="text-danger"></span>
                     </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label asp-for="Item.DamageNotes" class="control-label"></label>
+                        <textarea asp-for="Item.DamageNotes" class="form-control" rows="7"></textarea>
+                        <span asp-validation-for="Item.DamageNotes" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Item.Notes" class="control-label"></label>
+                        <textarea asp-for="Item.Notes" class="form-control" rows="7"></textarea>
+                        <span asp-validation-for="Item.Notes" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-4">
                     <div class="form-group">
                         <input type="submit" value="Save" class="btn btn-primary"/>
                     </div>
