@@ -88,6 +88,9 @@ dotnet ef migrations add RemoveItemName
 ```shell
 dotnet ef migrations add AddItemNotes
 ```
+```shell
+dotnet ef migrations add AddBookingNotes
+```
 
 ## Update the database
 

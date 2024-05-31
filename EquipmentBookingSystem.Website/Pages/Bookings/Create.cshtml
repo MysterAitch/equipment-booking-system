@@ -8,49 +8,82 @@
 <h1>Create</h1>
 
 <h4>Booking</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
+<hr/>
+
+<form method="post">
+    <div class="row">
+        <div class="col-md-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Booking.BookingStart" class="control-label"></label>
-                <input asp-for="Booking.BookingStart" class="form-control" />
+                <input asp-for="Booking.BookingStart" class="form-control"/>
                 <span asp-validation-for="Booking.BookingStart" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col-md-3">
             <div class="form-group">
                 <label asp-for="Booking.EventStart" class="control-label"></label>
-                <input asp-for="Booking.EventStart" class="form-control" />
+                <input asp-for="Booking.EventStart" class="form-control"/>
                 <span asp-validation-for="Booking.EventStart" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col-md-3">
             <div class="form-group">
                 <label asp-for="Booking.EventEnd" class="control-label"></label>
-                <input asp-for="Booking.EventEnd" class="form-control" />
+                <input asp-for="Booking.EventEnd" class="form-control"/>
                 <span asp-validation-for="Booking.EventEnd" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col-md-3">
             <div class="form-group">
                 <label asp-for="Booking.BookingEnd" class="control-label"></label>
-                <input asp-for="Booking.BookingEnd" class="form-control" />
+                <input asp-for="Booking.BookingEnd" class="form-control"/>
                 <span asp-validation-for="Booking.BookingEnd" class="text-danger"></span>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Booking.SjaEventType" class="control-label"></label>
+                <input asp-for="Booking.SjaEventType" class="form-control"/>
+                <span asp-validation-for="Booking.SjaEventType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Booking.SjaEventDipsId" class="control-label"></label>
+                <input asp-for="Booking.SjaEventDipsId" class="form-control"/>
+                <span asp-validation-for="Booking.SjaEventDipsId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Booking.SjaEventName" class="control-label"></label>
+                <input asp-for="Booking.SjaEventName" class="form-control"/>
+                <span asp-validation-for="Booking.SjaEventName" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Booking.BookedFor" class="control-label"></label>
-                <input asp-for="Booking.BookedFor" class="form-control" />
+                <input asp-for="Booking.BookedFor" class="form-control"/>
                 <span asp-validation-for="Booking.BookedFor" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Booking.Notes" class="control-label"></label>
-                <input asp-for="Booking.Notes" class="form-control" />
+                <input asp-for="Booking.Notes" class="form-control"/>
                 <span asp-validation-for="Booking.Notes" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary"/>
+            </div>
+        </div>
+    </div>
+</form>
 
 <div>
     <a asp-page="Index">Back to List</a>
 </div>
-
