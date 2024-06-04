@@ -14,43 +14,45 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].BookingStart)
+                @Html.DisplayNameFor(model => model.Bookings[0].BookingStart)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].EventStart)
+                @Html.DisplayNameFor(model => model.Bookings[0].EventStart)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].EventEnd)
+                @Html.DisplayNameFor(model => model.Bookings[0].EventEnd)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].BookingEnd)
+                @Html.DisplayNameFor(model => model.Bookings[0].BookingEnd)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].BookedBy)
+                @Html.DisplayNameFor(model => model.Bookings[0].SjaEventDipsId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].BookedFor)
+                @Html.DisplayNameFor(model => model.Bookings[0].SjaEventName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].Notes)
+                @Html.DisplayNameFor(model => model.Bookings[0].BookedFor)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].CreatedDate)
+                @Html.DisplayNameFor(model => model.Bookings[0].Notes)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].UpdatedDate)
+                Equipment bookings
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].CreatedBy)
+                @Html.DisplayNameFor(model => model.Bookings[0].CreatedDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Booking[0].UpdatedBy)
+                @Html.DisplayNameFor(model => model.Bookings[0].UpdatedDate)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Booking) {
+
+    @foreach (var item in Model.Bookings)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.BookingStart)
@@ -65,10 +67,32 @@
                 @Html.DisplayFor(modelItem => item.BookingEnd)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BookedBy)
+                @Html.DisplayFor(modelItem => item.SjaEventDipsId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SjaEventName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.BookedFor)
+            </td>
+            <td>
+                Total: @item.Items.Count()
+                <br/>
+                @{
+                    var groups = item.Items.GroupBy(i => i.Manufacturer + " " + i.Model)
+                        .Select(n => new
+                        {
+                            Name = n.Key,
+                            Count = n.Count()
+                        })
+                        .OrderBy(n => n.Name);
+                }
+                <ul class="small text-secondary">
+                    @foreach (var group in groups)
+                    {
+                        <li>@group.Name - @group.Count</li>
+                    }
+                </ul>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Notes)
@@ -80,17 +104,11 @@
                 @Html.DisplayFor(modelItem => item.UpdatedDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedBy)
-            </td>
-            <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

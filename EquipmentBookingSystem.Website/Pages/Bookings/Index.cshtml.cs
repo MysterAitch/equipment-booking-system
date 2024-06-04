@@ -13,10 +13,14 @@ public class IndexModel : PageModel
         _context = context;
     }
 
-    public IList<Booking> Booking { get; set; } = default!;
+    public IList<Booking> Bookings { get; set; } = default!;
+    public IList<Item> Items { get; set; } = default!;
 
     public async Task OnGetAsync()
     {
-        Booking = await _context.Booking.ToListAsync();
+        Bookings = await _context.Booking
+            .Include(b => b.Items)
+            .ThenInclude(i => i.Identifiers)
+            .ToListAsync();
     }
 }
