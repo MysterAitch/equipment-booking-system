@@ -38,9 +38,9 @@ public class EditModel : PageModel
         Item = item;
 
         OrderedIdentifiers = Item.Identifiers
-            .OrderBy(i => i.From)
+            .OrderBy(i => i.Type)
+            .ThenBy(i => i.From)
             .ThenBy(i => i.To)
-            .ThenBy(i => i.Type)
             .ThenBy(i => i.Value)
             .ToList();
 
