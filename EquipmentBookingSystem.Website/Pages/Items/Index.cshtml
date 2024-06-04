@@ -15,6 +15,12 @@
     <thead>
     <tr>
         <th>
+            Manufacturer
+        </th>
+        <th>
+            Model
+        </th>
+        <th>
             Serial Number
         </th>
         <th>
@@ -39,6 +45,12 @@
     @foreach (var item in Model.Item)
     {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Manufacturer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Model)
+            </td>
             <td>
                 @(item.Identifiers.FirstOrDefault(x => x.Type == "Serial Number")?.Value ?? "")
             </td>
