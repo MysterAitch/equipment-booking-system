@@ -20,7 +20,12 @@
             @if (Model.Item.Identifiers.Any())
             {
                 <ul>
-                    @foreach (var identifier in Model.Item.Identifiers)
+                    @foreach (var identifier in Model.Item.Identifiers
+                                  .OrderBy(i => i.Type)
+                                  .ThenBy(i => i.From)
+                                  .ThenBy(i => i.To)
+                                  .ThenBy(i => i.Value)
+                             )
                     {
                         <li>
                             <span>@Html.DisplayFor(model => identifier.Type)</span>:
