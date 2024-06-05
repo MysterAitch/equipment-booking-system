@@ -53,6 +53,6 @@ public class Item : BaseEntity
 
     public virtual string DisplayName()
     {
-        return $"{CallSign?.Value} / {Issi?.Value} ({SerialNumber?.Value})";
+        return $"{CallSign?.Value} / {Issi?.Value} ({SerialNumber?.Value}, {ProCloudAssetId?.Value})";
     }
 }
