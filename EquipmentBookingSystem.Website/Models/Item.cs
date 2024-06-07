@@ -18,14 +18,14 @@ public class Item : BaseEntity
     [NotMapped]
     public IEnumerable<ItemIdentifier> CurrentIdentifiers => Identifiers
         .Where(x => (x.From ?? DateTime.MinValue) <= DateTime.Today)
-        .Where(x => (x.To ?? DateTime.MaxValue) > DateTime.Today)
-    ;
+        .Where(x => (x.To ?? DateTime.MaxValue) > DateTime.Today);
 
     [NotMapped]
     public IEnumerable<ItemIdentifier> CurrentSerialNumbers => CurrentIdentifiers.Where(i => i.Type == "Serial Number");
 
     [NotMapped]
-    public IEnumerable<ItemIdentifier> CurrentProCloudAssetIds => CurrentIdentifiers.Where(i => i.Type == "ProCloud Asset ID");
+    public IEnumerable<ItemIdentifier> CurrentProCloudAssetIds => CurrentIdentifiers
+            .Where(i => i.Type == "ProCloud Asset ID");
 
     [NotMapped]
     public IEnumerable<ItemIdentifier> CurrentCallSigns => CurrentIdentifiers.Where(i => i.Type == "Call Sign");
@@ -53,6 +53,44 @@ public class Item : BaseEntity
 
     public virtual string DisplayName()
     {
-        return $"{CallSign?.Value} / {Issi?.Value} ({SerialNumber?.Value}, {ProCloudAssetId?.Value})";
+        string val = "";
+        if (CallSign is not null)
+        {
+            val += CallSign.Value;
+        }
+
+        if (Issi is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(val))
+            {
+                val += " / ";
+            }
+
+            val += Issi.Value;
+        }
+
+        // concatenate all remaining identifiers, and wrap in brackets ()
+        var otherIdentifiers = string.Join(", ", Identifiers
+            .Where(i => i != CallSign && i != Issi)
+            .Select(i => i.Type + ": " + i.Value)
+        );
+
+        if (!string.IsNullOrWhiteSpace(otherIdentifiers))
+        {
+            if (string.IsNullOrWhiteSpace(val))
+            {
+                val += otherIdentifiers;
+            }
+            else
+            {
+                val += " (";
+                val += otherIdentifiers;
+                val += ")";
+            }
+        }
+
+        val = $"{Manufacturer} {Model}: {val}";
+
+        return val;
     }
 }

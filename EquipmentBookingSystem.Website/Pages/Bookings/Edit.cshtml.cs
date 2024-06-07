@@ -45,12 +45,15 @@ public class EditModel : PageModel
             .Include(i => i.Bookings)
             .Include(i => i.Identifiers)
             .ToListAsync();
-        Options = Items.Select(s => new CheckBoxListItem()
-        {
-            Id = s.Id,
-            Display = s.DisplayName(),
-            IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
-        }).ToList();
+        Options = Items
+            .OrderBy(i => i.DisplayName())
+            .Select(s => new CheckBoxListItem()
+            {
+                Id = s.Id,
+                Display = s.DisplayName(),
+                IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
+            })
+            .ToList();
 
         return Page();
     }
@@ -66,12 +69,15 @@ public class EditModel : PageModel
 
         if (!ModelState.IsValid)
         {
-            Options = Items.Select(s => new CheckBoxListItem()
-            {
-                Id = s.Id,
-                Display = s.DisplayName(),
-                IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
-            }).ToList();
+            Options = Items
+                .OrderBy(i => i.DisplayName())
+                .Select(s => new CheckBoxListItem()
+                {
+                    Id = s.Id,
+                    Display = s.DisplayName(),
+                    IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
+                })
+                .ToList();
 
             return Page();
         }
