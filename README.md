@@ -56,6 +56,10 @@ dotnet aspnet-codegenerator razorpage -m Item -dc EquipmentBookingSystem.Website
 dotnet aspnet-codegenerator razorpage -m Booking -dc EquipmentBookingSystem.Website.Data.WebsiteDbContext -udl -outDir Pages/Bookings --databaseProvider SqlServer
 ```
 
+```shell
+dotnet aspnet-codegenerator razorpage -m Event -dc EquipmentBookingSystem.Website.Data.WebsiteDbContext -udl -outDir Pages/Events --databaseProvider SqlServer
+```
+
 ## Add a new migration
 
 ```shell
@@ -90,6 +94,9 @@ dotnet ef migrations add AddItemNotes
 ```
 ```shell
 dotnet ef migrations add AddBookingNotes
+```
+```shell
+dotnet ef migrations add AddBasicEvent
 ```
 
 ## Update the database

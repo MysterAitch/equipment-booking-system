@@ -1,0 +1,94 @@
+@page
+@model DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Event</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.EventCoverStart)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.EventCoverStart)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.EventCoverEnd)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.EventCoverEnd)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.EventStart)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.EventStart)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.EventEnd)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.EventEnd)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.DipsEventLocationString)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.DipsEventLocationString)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.DipsEventPostcode)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.DipsEventPostcode)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.DipsEventType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.DipsEventType)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.DipsIsDeleted)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.DipsIsDeleted)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.DipsId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.DipsId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.DipsEventTitle)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.DipsEventTitle)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.DipsAllocatedArea)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.DipsAllocatedArea)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Event.DipsAllocatedDistrict)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Event.DipsAllocatedDistrict)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Event.Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

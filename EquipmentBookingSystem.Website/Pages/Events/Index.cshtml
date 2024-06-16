@@ -1,0 +1,102 @@
+@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].EventCoverStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].EventCoverEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].EventStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].EventEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].DipsEventLocationString)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].DipsEventPostcode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].DipsEventType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].DipsIsDeleted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].DipsId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].DipsEventTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].DipsAllocatedArea)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event[0].DipsAllocatedDistrict)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Event) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventCoverStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventCoverEnd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventEnd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DipsEventLocationString)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DipsEventPostcode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DipsEventType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DipsIsDeleted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DipsId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DipsEventTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DipsAllocatedArea)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DipsAllocatedDistrict)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

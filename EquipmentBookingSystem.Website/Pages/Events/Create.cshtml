@@ -1,0 +1,86 @@
+@page
+@model CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Event</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Event.EventCoverStart" class="control-label"></label>
+                <input asp-for="Event.EventCoverStart" class="form-control" />
+                <span asp-validation-for="Event.EventCoverStart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.EventCoverEnd" class="control-label"></label>
+                <input asp-for="Event.EventCoverEnd" class="form-control" />
+                <span asp-validation-for="Event.EventCoverEnd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.EventStart" class="control-label"></label>
+                <input asp-for="Event.EventStart" class="form-control" />
+                <span asp-validation-for="Event.EventStart" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.EventEnd" class="control-label"></label>
+                <input asp-for="Event.EventEnd" class="form-control" />
+                <span asp-validation-for="Event.EventEnd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.DipsEventLocationString" class="control-label"></label>
+                <input asp-for="Event.DipsEventLocationString" class="form-control" />
+                <span asp-validation-for="Event.DipsEventLocationString" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.DipsEventPostcode" class="control-label"></label>
+                <input asp-for="Event.DipsEventPostcode" class="form-control" />
+                <span asp-validation-for="Event.DipsEventPostcode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.DipsEventType" class="control-label"></label>
+                <input asp-for="Event.DipsEventType" class="form-control" />
+                <span asp-validation-for="Event.DipsEventType" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Event.DipsIsDeleted" /> @Html.DisplayNameFor(model => model.Event.DipsIsDeleted)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.DipsId" class="control-label"></label>
+                <input asp-for="Event.DipsId" class="form-control" />
+                <span asp-validation-for="Event.DipsId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.DipsEventTitle" class="control-label"></label>
+                <input asp-for="Event.DipsEventTitle" class="form-control" />
+                <span asp-validation-for="Event.DipsEventTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.DipsAllocatedArea" class="control-label"></label>
+                <input asp-for="Event.DipsAllocatedArea" class="form-control" />
+                <span asp-validation-for="Event.DipsAllocatedArea" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Event.DipsAllocatedDistrict" class="control-label"></label>
+                <input asp-for="Event.DipsAllocatedDistrict" class="form-control" />
+                <span asp-validation-for="Event.DipsAllocatedDistrict" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+

@@ -20,6 +20,8 @@ public class WebsiteDbContext : DbContext
 
     public DbSet<EquipmentBookingSystem.Website.Models.Booking> Booking { get; set; } = default!;
 
+    public DbSet<EquipmentBookingSystem.Website.Models.Event> Events { get; set; } = default!;
+
     public DbSet<EquipmentBookingSystem.Website.Models.ItemIdentifier> ItemIdentifiers { get; set; } = default!;
 
 
