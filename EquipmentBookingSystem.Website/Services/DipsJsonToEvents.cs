@@ -29,6 +29,8 @@ public class DipsJsonToEvents
                 EventCoverEnd = DateTime.SpecifyKind(DateTime.Parse(eventJsonObject["endDateTime"]?.ToString()), DateTimeKind.Utc),
                 DipsEventLocationString = eventJsonObject["Event Location"]?.ToString(),
                 DipsEventPostcode = eventJsonObject["Event Postcode"]?.ToString(),
+                DipsEventType = eventJsonObject["Event Type"]?.ToString(),
+                DipsIsDeleted = eventJsonObject["Is Deleted"]?.Value<bool>() ?? false,
                 DipsId = eventJsonObject["SJA Event ID"]?.ToString(),
                 DipsEventTitle = eventJsonObject["Event Title"]?.ToString() ?? string.Empty,
                 DipsAllocatedArea = eventJsonObject["Allocated Area"]?.ToString(),

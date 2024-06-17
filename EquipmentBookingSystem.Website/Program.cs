@@ -30,6 +30,11 @@ builder.Services.AddDbContext<WebsiteDbContext>(options =>
     var dbConnectionString = builder.Configuration.GetConnectionString("WebsiteDbContext") ??
                              throw new InvalidOperationException("Connection string 'WebsiteDbContext' not found.");
     options.UseSqlServer(dbConnectionString);
+
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableDetailedErrors(true);
+    }
 });
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -38,6 +43,7 @@ builder.Services.AddHealthChecks()
 
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<DipsJsonToEvents>();
 
 
 var app = builder.Build();

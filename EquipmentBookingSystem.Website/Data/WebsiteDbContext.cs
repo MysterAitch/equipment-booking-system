@@ -57,6 +57,7 @@ public class WebsiteDbContext : DbContext
                 Item item => item.Id,
                 Booking booking => booking.Id,
                 ItemIdentifier itemIdentifier => itemIdentifier.Id,
+                Event eventObj => eventObj.Id,
                 _ => throw new Exception("unrecognised item type: " + changedEntity.Entity.GetType().Name + " in AuditEntryForChanges()")
             };
 
@@ -97,13 +98,11 @@ public class WebsiteDbContext : DbContext
 
                 this.Audits.Add(audit);
             }
-
         }
     }
 
     public override int SaveChanges()
     {
-
         var entries = ChangeTracker
             .Entries()
             .Where(e => e.Entity is BaseEntity && (
@@ -112,11 +111,11 @@ public class WebsiteDbContext : DbContext
 
         foreach (var entityEntry in entries)
         {
-            ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
+            ((BaseEntity) entityEntry.Entity).UpdatedDate = DateTime.Now;
 
             if (entityEntry.State == EntityState.Added)
             {
-                ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                ((BaseEntity) entityEntry.Entity).CreatedDate = DateTime.Now;
             }
         }
 
@@ -127,7 +126,6 @@ public class WebsiteDbContext : DbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-
         var entries = ChangeTracker
             .Entries()
             .Where(e => e.Entity is BaseEntity && (
@@ -136,11 +134,11 @@ public class WebsiteDbContext : DbContext
 
         foreach (var entityEntry in entries)
         {
-            ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
+            ((BaseEntity) entityEntry.Entity).UpdatedDate = DateTime.Now;
 
             if (entityEntry.State == EntityState.Added)
             {
-                ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
+                ((BaseEntity) entityEntry.Entity).CreatedDate = DateTime.Now;
             }
         }
 

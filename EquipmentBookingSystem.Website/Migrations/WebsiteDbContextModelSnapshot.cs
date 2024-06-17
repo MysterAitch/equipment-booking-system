@@ -169,16 +169,16 @@ namespace EquipmentBookingSystem.Website.Migrations
                     b.Property<bool>("DipsIsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTimeOffset>("EventCoverEnd")
+                    b.Property<DateTimeOffset?>("EventCoverEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset>("EventCoverStart")
+                    b.Property<DateTimeOffset?>("EventCoverStart")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("EventEnd")
+                    b.Property<DateTime?>("EventEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EventStart")
+                    b.Property<DateTime?>("EventStart")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");

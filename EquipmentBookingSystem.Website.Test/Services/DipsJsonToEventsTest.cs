@@ -61,6 +61,8 @@ public class DipsJsonToEventsTest
 
         var firstEvent = events[0];
         Assert.Equal("964335", firstEvent.DipsId);
+        Assert.Equal("Event Cover", firstEvent.DipsEventType);
+        Assert.False(firstEvent.DipsIsDeleted);
         Assert.Equal("WWMD - Event name 123 - ZEF004", firstEvent.DipsEventTitle);
         Assert.Equal("West Midlands District", firstEvent.DipsAllocatedArea);
         Assert.Equal("West Midlands District", firstEvent.DipsAllocatedDistrict);

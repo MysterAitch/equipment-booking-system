@@ -31,10 +31,10 @@ public class EventTest
         // Assert
         Assert.NotNull(event1);
         Assert.NotEqual(Guid.Empty, event1.Id);
-        Assert.Equal(DateTime.Now.Date, event1.EventCoverStart.Date);
-        Assert.Equal(DateTime.Now.Date, event1.EventCoverEnd.Date);
-        Assert.Equal(DateTime.Now.Date, event1.EventStart.Date);
-        Assert.Equal(DateTime.Now.Date, event1.EventEnd.Date);
+        Assert.Equal(DateTime.Now.Date, event1.EventCoverStart.Value.Date);
+        Assert.Equal(DateTime.Now.Date, event1.EventCoverEnd.Value.Date);
+        Assert.Equal(DateTime.Now.Date, event1.EventStart.Value.Date);
+        Assert.Equal(DateTime.Now.Date, event1.EventEnd.Value.Date);
         Assert.Equal("DipsEventLocationString", event1.DipsEventLocationString);
         Assert.Equal("DipsEventPostcode", event1.DipsEventPostcode);
         Assert.Equal("DipsId", event1.DipsId);

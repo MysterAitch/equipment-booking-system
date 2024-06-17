@@ -1,0 +1,34 @@
+@page
+@model ImportModel
+
+@{
+    ViewData["Title"] = "Import";
+}
+
+<h1>Import</h1>
+
+
+<h4>Events from DIPS</h4>
+<hr/>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label asp-for="Json" class="control-label"></label>
+                        <textarea asp-for="Json" class="form-control" rows="7"></textarea>
+                        <span asp-validation-for="Json" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary"/>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

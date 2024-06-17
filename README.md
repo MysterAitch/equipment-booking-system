@@ -98,6 +98,12 @@ dotnet ef migrations add AddBookingNotes
 ```shell
 dotnet ef migrations add AddBasicEvent
 ```
+```shell
+dotnet ef migrations add AddBasicEvent2
+```
+```shell
+dotnet ef migrations add AddBasicEvent3
+```
 
 ## Update the database
 
