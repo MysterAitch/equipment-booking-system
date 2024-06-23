@@ -1,10 +1,11 @@
 using System.Text;
 using System.Text.Json;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.EntityFrameworkCore;
-using EquipmentBookingSystem.Website.Data;
 using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -30,6 +31,8 @@ builder.Services.AddDbContext<WebsiteDbContext>(options =>
     var dbConnectionString = builder.Configuration.GetConnectionString("WebsiteDbContext") ??
                              throw new InvalidOperationException("Connection string 'WebsiteDbContext' not found.");
     options.UseSqlServer(dbConnectionString);
+    options.EnableDetailedErrors();
+    options.EnableSensitiveDataLogging();
 });
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -37,6 +40,8 @@ builder.Services.AddHealthChecks()
     .AddDbContextCheck<WebsiteDbContext>();
 
 
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 

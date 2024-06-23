@@ -1,8 +1,12 @@
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
-using EquipmentBookingSystem.Website.Models;
-using EquipmentBookingSystem.Website.Services;
 
-namespace EquipmentBookingSystem.Website.Data;
+namespace EquipmentBookingSystem.Persistence.Data;
 
 public class WebsiteDbContext : DbContext
 {
@@ -16,11 +20,11 @@ public class WebsiteDbContext : DbContext
 
     public DbSet<Audit> Audits { get; set; } = default!;
 
-    public DbSet<EquipmentBookingSystem.Website.Models.Item> Item { get; set; } = default!;
+    public DbSet<Item> Item { get; set; } = default!;
 
-    public DbSet<EquipmentBookingSystem.Website.Models.Booking> Booking { get; set; } = default!;
+    public DbSet<Booking> Booking { get; set; } = default!;
 
-    public DbSet<EquipmentBookingSystem.Website.Models.ItemIdentifier> ItemIdentifiers { get; set; } = default!;
+    public DbSet<ItemIdentifier> ItemIdentifiers { get; set; } = default!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -142,7 +146,7 @@ public class WebsiteDbContext : DbContext
             }
         }
 
-        AuditEntryForChanges();
+        // AuditEntryForChanges();
 
         return base.SaveChangesAsync(cancellationToken);
     }

@@ -1,25 +1,35 @@
-using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
+using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentBookingSystem.Website.Pages.Items;
 
 public class IndexModel : PageModel
 {
-    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+    private readonly IItemService _itemService;
+    private readonly IBookingService _bookingService;
+    private readonly IUserService _userService;
 
-    public IndexModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
+    public IndexModel(IItemService itemService, IBookingService bookingService, IUserService userService)
     {
-        _context = context;
+        _itemService = itemService;
+        _bookingService = bookingService;
+        _userService = userService;
     }
 
-    public IList<Item> Item { get; set; } = default!;
+    public IList<Item> Items { get; set; } = new List<Item>();
+    public IList<Booking> BookingsForItems { get; set; } = new List<Booking>();
 
     public async Task OnGetAsync()
     {
-        Item = await _context.Item
-            .Include(i => i.Bookings)
-            .Include(i => i.Identifiers)
-            .ToListAsync();
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
+        Items = await _itemService.GetVisibleItems(currentUser);
+
+        var itemIds = Items.Select(i => i.Id)
+            .Where(id => id is not null)
+            .ToList();
+        var bookings = await _bookingService.BookingsForItems(currentUser, itemIds);
+        BookingsForItems = bookings.ToList();
     }
 }

@@ -1,10 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EquipmentBookingSystem.Website.Models;
+namespace EquipmentBookingSystem.Domain.Models;
 
 public class ItemIdentifier
 {
-    public Guid Id { get; init; }
+    public ItemIdentifierId? Id { get; init; } = default!;
 
     public string Type { get; set; } = string.Empty;
 
@@ -17,5 +19,7 @@ public class ItemIdentifier
     public DateTime? To { get; set; }
 
     public HashSet<Item> Items { get; } = new();
+
+    public record ItemIdentifierId(Guid Value);
 
 }

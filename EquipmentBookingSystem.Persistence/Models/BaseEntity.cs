@@ -1,6 +1,7 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EquipmentBookingSystem.Website.Models;
+namespace EquipmentBookingSystem.Persistence.Models;
 
 public class BaseEntity
 {

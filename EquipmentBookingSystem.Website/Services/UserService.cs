@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
 
 namespace EquipmentBookingSystem.Website.Services;
 
@@ -11,19 +13,38 @@ public class UserService : IUserService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string? GetCurrentUserId() => _httpContextAccessor.HttpContext?
-        .User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    public string? GetCurrentUserId()
+    {
+        var currentUser = GetCurrentUser();
+        return currentUser?.Id;
+    }
 
-    public string? GetCurrentUserName() => _httpContextAccessor.HttpContext?
-        .User.Identity?.Name;
+    public string? GetCurrentUserName()
+    {
+        var currentUser = GetCurrentUser();
+        return currentUser?.Name;
+    }
 
     public string? GetCurrentUserEmail()
     {
+        var currentUser = GetCurrentUser();
+        return currentUser?.Email;
+    }
+
+    public User? GetCurrentUser()
+    {
         var httpContext = _httpContextAccessor.HttpContext;
         var httpContextUser = httpContext?.User;
-        var findFirstEmailClaim = httpContextUser?.FindFirst(ClaimTypes.Email);
-        var currentUserEmail = findFirstEmailClaim?.Value;
 
-        return currentUserEmail;
+        var currentUserId = httpContextUser?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var currentUserName = httpContextUser?.Identity?.Name;
+        var currentUserEmail = httpContextUser?.FindFirst(ClaimTypes.Email)?.Value;
+
+        return new User
+        {
+            Id = currentUserId,
+            Name = currentUserName,
+            Email = currentUserEmail
+        };
     }
 }

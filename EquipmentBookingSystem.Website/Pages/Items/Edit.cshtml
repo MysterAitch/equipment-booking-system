@@ -14,7 +14,7 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div asp-validation-summary="All" class="text-danger"></div>
-            <input type="hidden" asp-for="Item.Id"/>
+            <input type="hidden" asp-for="ItemId"/>
 
             <div class="row">
                 <div class="col-12">
@@ -24,7 +24,7 @@
                         {
                             <div class="identifier-block form-group mb-4">
                                 @* Only include the Id value here for pre-existing values *@
-                                <input asp-for="@Model.OrderedIdentifiers[i].Id" type="hidden"/>
+                                <input asp-for="@Model.OrderedIdentifiers[i].Id.Value" type="hidden"/>
 
                                 @*Two columns*@
                                 <div class="row">
@@ -126,28 +126,28 @@
                 <div class="col-md-4">
 
                     <div class="form-group">
-                        <label asp-for="Item.Manufacturer" class="control-label"></label>
-                        <input asp-for="Item.Manufacturer" class="form-control"/>
-                        <span asp-validation-for="Item.Manufacturer" class="text-danger"></span>
+                        <label asp-for="Manufacturer" class="control-label"></label>
+                        <input asp-for="Manufacturer" class="form-control"/>
+                        <span asp-validation-for="Manufacturer" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Item.Model" class="control-label"></label>
-                        <input asp-for="Item.Model" class="form-control"/>
-                        <span asp-validation-for="Item.Model" class="text-danger"></span>
+                        <label asp-for="Model" class="control-label"></label>
+                        <input asp-for="Model" class="form-control"/>
+                        <span asp-validation-for="Model" class="text-danger"></span>
                     </div>
                 </div>
             </div>
             <div class="row mt-4">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label asp-for="Item.DamageNotes" class="control-label"></label>
-                        <textarea asp-for="Item.DamageNotes" class="form-control" rows="7"></textarea>
-                        <span asp-validation-for="Item.DamageNotes" class="text-danger"></span>
+                        <label asp-for="DamageNotes" class="control-label"></label>
+                        <textarea asp-for="DamageNotes" class="form-control" rows="7"></textarea>
+                        <span asp-validation-for="DamageNotes" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Item.Notes" class="control-label"></label>
-                        <textarea asp-for="Item.Notes" class="form-control" rows="7"></textarea>
-                        <span asp-validation-for="Item.Notes" class="text-danger"></span>
+                        <label asp-for="Notes" class="control-label"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="7"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -163,6 +163,6 @@
 </div>
 
 <div>
-    <a asp-page="./Details" asp-route-id="@Model.Item.Id">Back to item details</a> |
+    <a asp-page="./Details" asp-route-id="@Model.ItemId">Back to item details</a> |
     <a asp-page="./Index">Back to List</a>
 </div>

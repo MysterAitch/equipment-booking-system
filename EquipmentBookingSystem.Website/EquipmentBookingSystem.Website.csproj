@@ -39,10 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\Items\Create.cshtml" />
     <_ContentIncludedByDefault Remove="Pages\Items\Delete.cshtml" />
     <_ContentIncludedByDefault Remove="Pages\Items\Details.cshtml" />
@@ -56,6 +52,12 @@
     <UpToDateCheckInput Remove="Pages\Items\Details.cshtml" />
     <UpToDateCheckInput Remove="Pages\Items\Edit.cshtml" />
     <UpToDateCheckInput Remove="Pages\Items\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EquipmentBookingSystem.Application\EquipmentBookingSystem.Application.csproj" />
+    <ProjectReference Include="..\EquipmentBookingSystem.Domain\EquipmentBookingSystem.Domain.csproj" />
+    <ProjectReference Include="..\EquipmentBookingSystem.Persistence\EquipmentBookingSystem.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

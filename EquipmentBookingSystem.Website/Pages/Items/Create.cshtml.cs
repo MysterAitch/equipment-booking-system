@@ -1,4 +1,6 @@
-using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
+using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -6,37 +8,49 @@ namespace EquipmentBookingSystem.Website.Pages.Items;
 
 public class CreateModel : PageModel
 {
-    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+    private readonly IItemService _itemService;
+    private readonly IUserService _userService;
 
-    public CreateModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
+    public CreateModel(IItemService itemService, IUserService userService)
     {
-        _context = context;
+        _itemService = itemService;
+        _userService = userService;
     }
+
+
+    public string Manufacturer { get; set; } = string.Empty;
+
+    public string Model { get; set; } = string.Empty;
+
 
     public IActionResult OnGet()
     {
-        Item = new Item();
         return Page();
     }
 
-    [BindProperty]
-    public Item Item { get; set; } = default!;
 
-    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     public async Task<IActionResult> OnPostAsync()
     {
-        var currentUser = User.Identity?.Name ?? throw new UnidentifiedUserException();
-        Item.CreatedBy = currentUser;
-        Item.UpdatedBy = currentUser;
-
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        _context.Item.Add(Item);
-        await _context.SaveChangesAsync();
+        var item = new Item
+        {
+            Manufacturer = Manufacturer,
+            Model = Model,
+        };
 
-        return RedirectToPage("./Edit", new { id = Item.Id });
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
+        var newItem = await _itemService.CreateNew(currentUser, item);
+
+        var newId = newItem.Id?.Value;
+        if (newId is null || newId == Guid.Empty)
+        {
+            throw new InvalidOperationException("Item ID is null");
+        }
+
+        return RedirectToPage("./Edit", new {id = newId});
     }
 }

@@ -1,24 +1,39 @@
-using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
+using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentBookingSystem.Website.Pages.Items;
 
 public class EditModel : PageModel
 {
-    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+    private readonly IItemService _itemService;
 
-    public EditModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
+    private IUserService _userService;
+
+    public EditModel(IItemService itemService, IUserService userService)
     {
-        _context = context;
+        _itemService = itemService;
+        _userService = userService;
     }
 
-    [BindProperty]
-    public Item Item { get; set; } = default!;
+    public Guid ItemId { get; set; }
 
-    [BindProperty]
-    public List<ItemIdentifier> OrderedIdentifiers { get; set; } = new();
+    public string Manufacturer { get; set; } = string.Empty;
+
+    public string Model { get; set; } = string.Empty;
+
+    public HashSet<Booking> Bookings { get; set; } = new();
+
+    public HashSet<ItemIdentifier> Identifiers { get; set; } = new();
+
+    public String? DamageNotes { get; set; } = string.Empty;
+
+    public String? Notes { get; set; } = string.Empty;
+
+
+    [BindProperty] public List<ItemIdentifier> OrderedIdentifiers { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -27,17 +42,24 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        var item = await _context.Item
-            .Include(i => i.Bookings)
-            .Include(i => i.Identifiers)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var itemId = new Item.ItemId(id.Value);
+        var item = await _itemService.GetById(itemId);
         if (item == null)
         {
             return NotFound();
         }
-        Item = item;
 
-        OrderedIdentifiers = Item.Identifiers
+        ItemId = itemId.Value;
+        Manufacturer = item.Manufacturer;
+        Model = item.Model;
+        DamageNotes = item.DamageNotes;
+        Notes = item.Notes;
+
+        // TODO: Expand with view model for identifiers
+        Identifiers = item.Identifiers;
+
+
+        OrderedIdentifiers = item.Identifiers
             .OrderBy(i => i.Type)
             .ThenBy(i => i.From)
             .ThenBy(i => i.To)
@@ -48,7 +70,7 @@ public class EditModel : PageModel
         {
             OrderedIdentifiers.Add(new ItemIdentifier()
             {
-                Id = Guid.NewGuid(),
+                Id = new ItemIdentifier.ItemIdentifierId(Guid.NewGuid()),
                 Type = "Serial Number",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -57,7 +79,7 @@ public class EditModel : PageModel
 
             OrderedIdentifiers.Add(new ItemIdentifier()
             {
-                Id = Guid.NewGuid(),
+                Id = new ItemIdentifier.ItemIdentifierId(Guid.NewGuid()),
                 Type = "ProCloud Asset ID",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -66,7 +88,7 @@ public class EditModel : PageModel
 
             OrderedIdentifiers.Add(new ItemIdentifier()
             {
-                Id = Guid.NewGuid(),
+                Id = new ItemIdentifier.ItemIdentifierId(Guid.NewGuid()),
                 Type = "Call Sign",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -75,7 +97,7 @@ public class EditModel : PageModel
 
             OrderedIdentifiers.Add(new ItemIdentifier()
             {
-                Id = Guid.NewGuid(),
+                Id = new ItemIdentifier.ItemIdentifierId(Guid.NewGuid()),
                 Type = "ISSI",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -86,13 +108,26 @@ public class EditModel : PageModel
         return Page();
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
-    public async Task<IActionResult> OnPostAsync()
+
+    public async Task<IActionResult> OnPostAsync(Guid? id /*, List<Identifier> identifiers*/)
     {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var itemId = new Item.ItemId(id.Value);
+        var item = await _itemService.GetById(itemId);
+        if (item == null)
+        {
+            return NotFound();
+        }
+
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
+
         if (!ModelState.IsValid)
         {
-            OrderedIdentifiers = Item.Identifiers
+            OrderedIdentifiers = item.Identifiers
                 .OrderBy(i => i.From)
                 .ThenBy(i => i.To)
                 .ThenBy(i => i.Type)
@@ -102,28 +137,21 @@ public class EditModel : PageModel
             return Page();
         }
 
-        var oldItem = await _context.Item
-            .Include(i => i.Bookings)
-            .Include(i => i.Identifiers)
-            .SingleOrDefaultAsync(m => m.Id == Item.Id);
-        if (oldItem == null)
-        {
-            return NotFound();
-        }
 
-        oldItem.Manufacturer = Item.Manufacturer;
-        oldItem.Model = Item.Model;
-        oldItem.DamageNotes = Item.DamageNotes;
-        oldItem.Notes = Item.Notes;
+        item.Manufacturer = Manufacturer;
+        item.Model = Model;
+        item.DamageNotes = DamageNotes;
+        item.Notes = Notes;
+
 
         // Update oldIdentifiers -- update where Id matches, remove where not in OrderedIdentifiers, and add where not in oldIdentifiers (inserting Id)
-        var oldIdentifiers = oldItem.Identifiers.ToList();
+        var oldIdentifiers = item.Identifiers.ToList();
         foreach (var oldIdentifier in oldIdentifiers)
         {
             var orderedIdentifier = OrderedIdentifiers.SingleOrDefault(i => i.Id == oldIdentifier.Id);
             if (orderedIdentifier == null)
             {
-                oldItem.Identifiers.Remove(oldIdentifier);
+                item.Identifiers.Remove(oldIdentifier);
             }
             else
             {
@@ -141,44 +169,22 @@ public class EditModel : PageModel
                 // This is a new identifier, not previously seen -- therefore add it
                 var itemIdentifier = new ItemIdentifier()
                 {
-                    Id = Guid.Empty == orderedIdentifier.Id ? Guid.NewGuid() : orderedIdentifier.Id,
+                    Id = Guid.Empty == orderedIdentifier.Id?.Value
+                        ? new ItemIdentifier.ItemIdentifierId(Guid.NewGuid())
+                        : orderedIdentifier.Id,
                     Type = orderedIdentifier.Type,
                     Value = orderedIdentifier.Value,
                     From = orderedIdentifier.From,
                     To = orderedIdentifier.To,
                 };
-                oldItem.Identifiers.Add(itemIdentifier);
+                item.Identifiers.Add(itemIdentifier);
 
-                _context.ItemIdentifiers.Add(itemIdentifier);
+                var newIdentifier = await _itemService.CreateIdentifier(itemIdentifier);
             }
         }
 
-        oldItem.UpdatedDate = DateTime.Now;
+        await _itemService.Update(itemId, currentUser, item);
 
-        var x = User.Identity?.Name ?? throw new UnidentifiedUserException();
-        oldItem.UpdatedBy = x;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!ItemExists(Item.Id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return RedirectToPage("./Details", new { id = Item.Id });
-    }
-
-    private bool ItemExists(Guid id)
-    {
-        return _context.Item.Any(e => e.Id == id);
+        return RedirectToPage("./Details", new {id = item.Id?.Value ?? throw new Exception("Item ID not found")});
     }
 }

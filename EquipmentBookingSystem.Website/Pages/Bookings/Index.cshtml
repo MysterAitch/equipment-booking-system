@@ -41,10 +41,10 @@
                 Equipment bookings
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Bookings[0].CreatedDate)
+                @Html.DisplayNameFor(model => model.Bookings[0].RecordMetaData.CreatedAt)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Bookings[0].UpdatedDate)
+                @Html.DisplayNameFor(model => model.Bookings[0].RecordMetaData.UpdatedAt)
             </th>
             <th></th>
         </tr>
@@ -76,6 +76,9 @@
                 @Html.DisplayFor(modelItem => item.BookedFor)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
                 Total: @item.Items.Count()
                 <br/>
                 @{
@@ -95,18 +98,15 @@
                 </ul>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Notes)
+                @Html.DisplayFor(modelItem => item.RecordMetaData.CreatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
+                @Html.DisplayFor(modelItem => item.RecordMetaData.UpdatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UpdatedDate)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-page="./Edit" asp-route-id="@item.Id.Value">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id.Value">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id.Value">Delete</a>
             </td>
         </tr>
     }

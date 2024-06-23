@@ -1,24 +1,52 @@
-using EquipmentBookingSystem.Website.Models;
-using EquipmentBookingSystem.Website.Pages.Items;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
+using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentBookingSystem.Website.Pages.Bookings;
 
 public class EditModel : PageModel
 {
-    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+    private readonly IBookingService _bookingService;
+    private readonly IUserService _userService;
 
-    public EditModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
+    public EditModel(IBookingService bookingService, IUserService userService)
     {
-        _context = context;
+        _bookingService = bookingService;
+        _userService = userService;
     }
 
     [BindProperty]
-    public Booking Booking { get; set; } = default!;
+    public Guid BookingId { get; set; }
 
-    protected internal List<Item> Items { get; set; } = new();
+    [BindProperty]
+    public DateTime EventStart { get; set; }
+
+    [BindProperty]
+    public DateTime EventEnd { get; set; }
+
+    [BindProperty]
+    public DateTime BookingStart { get; set; }
+
+    [BindProperty]
+    public DateTime BookingEnd { get; set; }
+
+    [BindProperty]
+    public string BookedFor { get; set; } = string.Empty;
+
+    [BindProperty]
+    public string SjaEventDipsId { get; set; } = string.Empty;
+
+    [BindProperty]
+    public string SjaEventName { get; set; } = string.Empty;
+
+    [BindProperty]
+    public string SjaEventType { get; set; } = string.Empty;
+
+    [BindProperty]
+    public string Notes { get; set; } = string.Empty;
+
 
     [BindProperty]
     public List<CheckBoxListItem> Options { get; set; } = new();
@@ -30,109 +58,87 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        var booking = await _context.Booking
-            .Include(b => b.Items)
-            .ThenInclude(i => i.Identifiers)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var bookingId = new Booking.BookingId(id.Value);
+        var booking = await _bookingService.GetById(bookingId);
         if (booking == null)
         {
             return NotFound();
         }
 
-        Booking = booking;
+        BookingId = booking.Id.Value;
+        BookingStart = booking.BookingStart;
+        EventStart = booking.EventStart;
+        EventEnd = booking.EventEnd;
+        BookingEnd = booking.BookingEnd;
+        BookedFor = booking.BookedFor ?? string.Empty;
+        Notes = booking.Notes;
 
-        Items = await _context.Item
-            .Include(i => i.Bookings)
-            .Include(i => i.Identifiers)
-            .ToListAsync();
-        Options = Items
+        SjaEventName = booking.SjaEventName;
+        SjaEventDipsId = booking.SjaEventDipsId;
+        SjaEventType = booking.SjaEventType;
+
+
+        var items = await _bookingService
+            .ItemsPotentiallyAvailableForBooking(booking.Id);
+        Options = items
             .OrderBy(i => i.DisplayName())
             .Select(s => new CheckBoxListItem()
             {
-                Id = s.Id,
+                Id = s.Id.Value,
                 Display = s.DisplayName(),
-                IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
+                IsChecked = booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
             })
             .ToList();
 
         return Page();
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
-    public async Task<IActionResult> OnPostAsync(List<Guid> selectedOptions)
+
+    public async Task<IActionResult> OnPostAsync(Guid? id, List<Guid> selectedOptions)
     {
-        Items = await _context.Item
-            .Include(i => i.Bookings)
-            .Include(i => i.Identifiers)
-            .ToListAsync();
-
-        if (!ModelState.IsValid)
+        if (id == null)
         {
-            Options = Items
-                .OrderBy(i => i.DisplayName())
-                .Select(s => new CheckBoxListItem()
-                {
-                    Id = s.Id,
-                    Display = s.DisplayName(),
-                    IsChecked = Booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
-                })
-                .ToList();
-
-            return Page();
+            return NotFound();
         }
 
-        var oldBooking = await _context.Booking
-            .Include(b => b.Items)
-            .ThenInclude(i => i.Identifiers)
-            .SingleOrDefaultAsync(m => m.Id == Booking.Id);
-        if (oldBooking == null)
+        var bookingId = new Booking.BookingId(id.Value);
+        var booking = await _bookingService.GetById(bookingId);
+        if (booking == null)
         {
             // Attempting to edit a booking that doesn't exist
             return NotFound();
         }
 
-        oldBooking.BookingStart = Booking.BookingStart;
-        oldBooking.EventStart = Booking.EventStart;
-        oldBooking.EventEnd = Booking.EventEnd;
-        oldBooking.BookingEnd = Booking.BookingEnd;
-        oldBooking.BookedFor = Booking.BookedFor;
-        oldBooking.Notes = Booking.Notes;
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
 
-        oldBooking.Items.Clear();
-        // oldBooking.Items.RemoveWhere(i => Options.Any(o => o.Id == i.Id && !o.IsChecked));
-        Items.Where(i => Options.Any(o => o.Id == i.Id && o.IsChecked))
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        booking.BookingStart = BookingStart;
+        booking.EventStart = EventStart;
+        booking.EventEnd = EventEnd;
+        booking.BookingEnd = BookingEnd;
+        booking.BookedFor = BookedFor;
+        booking.Notes = Notes;
+
+        booking.SjaEventName = SjaEventName;
+        booking.SjaEventDipsId = SjaEventDipsId;
+        booking.SjaEventType = SjaEventType;
+
+        var items = await _bookingService
+            .ItemsPotentiallyAvailableForBooking(booking.Id);
+
+        // TODO: Update to not require full Item objects -- just the item IDs.
+        booking.Items.Clear();
+        items.Where(i => Options.Any(o => o.Id == i.Id.Value && o.IsChecked))
             .ToList()
-            .ForEach(i => oldBooking.Items.Add(i));
+            .ForEach(i => booking.Items.Add(i));
 
-        oldBooking.UpdatedDate = DateTime.Now;
 
-        var currentUser = User.Identity?.Name ?? throw new UnidentifiedUserException();
-        oldBooking.UpdatedBy = currentUser;
+        await _bookingService.Update(bookingId, currentUser, booking);
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!BookingExists(Booking.Id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return RedirectToPage("./Details", new { id = Booking.Id });
+        return RedirectToPage("./Details", new {id = booking.Id.Value});
     }
-
-    private bool BookingExists(Guid id)
-    {
-        return _context.Booking.Any(e => e.Id == id);
-    }
-
-
 }

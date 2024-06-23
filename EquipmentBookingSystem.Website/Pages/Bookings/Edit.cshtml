@@ -12,55 +12,55 @@
 <form method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div asp-validation-summary="All" class="text-danger"></div>
-    <input type="hidden" asp-for="Booking.Id"/>
+    <input type="hidden" asp-for="BookingId"/>
 
     <div class="row">
         <div class="col-md-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Booking.BookingStart" class="control-label"></label>
-                <input asp-for="Booking.BookingStart" class="form-control"/>
-                <span asp-validation-for="Booking.BookingStart" class="text-danger"></span>
+                <label asp-for="BookingStart" class="control-label"></label>
+                <input asp-for="BookingStart" class="form-control"/>
+                <span asp-validation-for="BookingStart" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label asp-for="Booking.EventStart" class="control-label"></label>
-                <input asp-for="Booking.EventStart" class="form-control"/>
-                <span asp-validation-for="Booking.EventStart" class="text-danger"></span>
+                <label asp-for="EventStart" class="control-label"></label>
+                <input asp-for="EventStart" class="form-control"/>
+                <span asp-validation-for="EventStart" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label asp-for="Booking.EventEnd" class="control-label"></label>
-                <input asp-for="Booking.EventEnd" class="form-control"/>
-                <span asp-validation-for="Booking.EventEnd" class="text-danger"></span>
+                <label asp-for="EventEnd" class="control-label"></label>
+                <input asp-for="EventEnd" class="form-control"/>
+                <span asp-validation-for="EventEnd" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label asp-for="Booking.BookingEnd" class="control-label"></label>
-                <input asp-for="Booking.BookingEnd" class="form-control"/>
-                <span asp-validation-for="Booking.BookingEnd" class="text-danger"></span>
+                <label asp-for="BookingEnd" class="control-label"></label>
+                <input asp-for="BookingEnd" class="form-control"/>
+                <span asp-validation-for="BookingEnd" class="text-danger"></span>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <label asp-for="Booking.SjaEventType" class="control-label"></label>
-                <input asp-for="Booking.SjaEventType" class="form-control"/>
-                <span asp-validation-for="Booking.SjaEventType" class="text-danger"></span>
+                <label asp-for="SjaEventType" class="control-label"></label>
+                <input asp-for="SjaEventType" class="form-control"/>
+                <span asp-validation-for="SjaEventType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Booking.SjaEventDipsId" class="control-label"></label>
-                <input asp-for="Booking.SjaEventDipsId" class="form-control"/>
-                <span asp-validation-for="Booking.SjaEventDipsId" class="text-danger"></span>
+                <label asp-for="SjaEventDipsId" class="control-label"></label>
+                <input asp-for="SjaEventDipsId" class="form-control"/>
+                <span asp-validation-for="SjaEventDipsId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Booking.SjaEventName" class="control-label"></label>
-                <input asp-for="Booking.SjaEventName" class="form-control"/>
-                <span asp-validation-for="Booking.SjaEventName" class="text-danger"></span>
+                <label asp-for="SjaEventName" class="control-label"></label>
+                <input asp-for="SjaEventName" class="form-control"/>
+                <span asp-validation-for="SjaEventName" class="text-danger"></span>
             </div>
         </div>
     </div>
@@ -68,14 +68,14 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <label asp-for="Booking.BookedFor" class="control-label"></label>
-                <input asp-for="Booking.BookedFor" class="form-control"/>
-                <span asp-validation-for="Booking.BookedFor" class="text-danger"></span>
+                <label asp-for="BookedFor" class="control-label"></label>
+                <input asp-for="BookedFor" class="form-control"/>
+                <span asp-validation-for="BookedFor" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Booking.Notes" class="control-label"></label>
-                @Html.TextAreaFor(x => x.Booking.Notes, new {@class = "form-control", @rows = 7})
-                <span asp-validation-for="Booking.Notes" class="text-danger"></span>
+                <label asp-for="Notes" class="control-label"></label>
+                @Html.TextAreaFor(x => x.Notes, new {@class = "form-control", @rows = 7})
+                <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
         </div>
     </div>
@@ -107,6 +107,6 @@
 </form>
 
 <div>
-    <a asp-page="./Details" asp-route-id="@Model.Booking.Id">Back to booking details</a> |
+    <a asp-page="./Details" asp-route-id="@Model.BookingId">Back to booking details</a> |
     <a asp-page="./Index">Back to List</a>
 </div>

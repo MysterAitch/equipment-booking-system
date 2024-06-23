@@ -1,5 +1,6 @@
-using EquipmentBookingSystem.Website.Models;
-using EquipmentBookingSystem.Website.Pages.Items;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
+using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -7,45 +8,89 @@ namespace EquipmentBookingSystem.Website.Pages.Bookings;
 
 public class CreateModel : PageModel
 {
-    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+    private readonly IBookingService _bookingService;
+    private readonly IUserService _userService;
 
-    public CreateModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
+
+    [BindProperty]
+    public DateTime EventStart { get; set; }
+
+    [BindProperty]
+    public DateTime EventEnd { get; set; }
+
+    [BindProperty]
+    public DateTime BookingStart { get; set; }
+
+    [BindProperty]
+    public DateTime BookingEnd { get; set; }
+
+    [BindProperty]
+    public string BookedFor { get; set; } = string.Empty;
+
+    [BindProperty]
+    public string SjaEventDipsId { get; set; } = string.Empty;
+
+    [BindProperty]
+    public string SjaEventName { get; set; } = string.Empty;
+
+    [BindProperty]
+    public string SjaEventType { get; set; } = string.Empty;
+
+    [BindProperty]
+    public string Notes { get; set; } = string.Empty;
+
+
+    public CreateModel(IBookingService bookingService, IUserService userService)
     {
-        _context = context;
+        _bookingService = bookingService;
+        _userService = userService;
     }
 
     public IActionResult OnGet()
     {
-        Booking = new Booking();
-
         // Default to a "nearby" date and time to make it easier to scroll to the correct date and time
         // (note: browsers seem to default to 0001-01-01 00:00:00)
-        Booking.BookingStart = DateTime.Today;
-        Booking.BookingEnd = DateTime.Today;
-        Booking.EventStart = DateTime.Today;
-        Booking.EventEnd = DateTime.Today;
+        BookingStart = DateTime.Today;
+        BookingEnd = DateTime.Today;
+        EventStart = DateTime.Today;
+        EventEnd = DateTime.Today;
 
         return Page();
     }
 
-    [BindProperty]
-    public Booking Booking { get; set; } = default!;
 
-    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     public async Task<IActionResult> OnPostAsync()
     {
-        var currentUser = User.Identity?.Name ?? throw new UnidentifiedUserException();
-        Booking.CreatedBy = currentUser;
-        Booking.UpdatedBy = currentUser;
-
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        _context.Booking.Add(Booking);
-        await _context.SaveChangesAsync();
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
+        var booking = new Booking()
+        {
+            BookingStart = BookingStart,
+            BookingEnd = BookingEnd,
+            EventStart = EventStart,
+            EventEnd = EventEnd,
+            BookedBy = currentUser,
+            BookedFor = BookedFor,
+            SjaEventDipsId = SjaEventDipsId,
+            SjaEventName = SjaEventName,
+            SjaEventType = SjaEventType,
+            Notes = Notes,
 
-        return RedirectToPage("./Index");
+        };
+
+        var newBooking = await _bookingService.CreateNew(currentUser, booking);
+
+
+        var newId = newBooking.Id?.Value;
+        if (newId is null || newId == Guid.Empty)
+        {
+            throw new InvalidOperationException("Item ID is null");
+        }
+
+        return RedirectToPage("./Edit", new {id = newId});
     }
 }

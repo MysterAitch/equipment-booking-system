@@ -1,3 +1,3 @@
-namespace EquipmentBookingSystem.Website.Pages.Items;
+namespace EquipmentBookingSystem.Website.Services;
 
 public class UnidentifiedUserException() : Exception("User is not identified.");

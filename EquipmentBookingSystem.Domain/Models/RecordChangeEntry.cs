@@ -1,6 +1,8 @@
-namespace EquipmentBookingSystem.Website.Models;
+using System;
 
-public class Audit
+namespace EquipmentBookingSystem.Domain.Models;
+
+public class RecordChangeEntry
 {
     public int Id { get; set; }
     public string UserEmail { get; set; } = string.Empty;

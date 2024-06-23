@@ -42,7 +42,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.Item)
+    @foreach (var item in Model.Items)
     {
         <tr>
             <td>
@@ -188,17 +188,18 @@
 
             <td>
                 @{
-                    var futureBookings = item.Bookings
+                    var futureBookingsForItem = Model.BookingsForItems
+                        .Where(x => x.Items.Any(i => i.Id.Value == item.Id.Value))
                         .Where(x => x.BookingStart > DateTime.Now)
                         .OrderBy(x => x.BookingStart)
                         .ToList();
                 }
-                @if (futureBookings.Any())
+                @if (futureBookingsForItem.Any())
                 {
-                    var nextBooking = futureBookings.First();
+                    var nextBooking = futureBookingsForItem.First();
                     var duration = nextBooking.BookingEnd - nextBooking.BookingStart;
                     <span>
-                        <a asp-area="" asp-page="/Bookings/Details" asp-route-id="@nextBooking.Id">
+                        <a asp-area="" asp-page="/Bookings/Details" asp-route-id="@nextBooking.Id.Value">
                             @nextBooking.BookingStart.ToString("ddd dd/MM/yyyy") to @nextBooking.BookingEnd.ToString("ddd dd/MM/yyyy")
                         </a>
                         <br/>
@@ -215,9 +216,12 @@
             </td>
 
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                @{
+                    var itemId = item.Id?.Value ?? throw new ArgumentNullException(nameof(item.Id));
+                }
+                <a asp-page="./Edit" asp-route-id="@itemId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@itemId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@itemId">Delete</a>
             </td>
         </tr>
     }

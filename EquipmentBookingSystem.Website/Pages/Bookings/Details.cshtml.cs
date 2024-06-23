@@ -1,22 +1,23 @@
-using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentBookingSystem.Website.Pages.Bookings;
 
 public class DetailsModel : PageModel
 {
-    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+    private readonly IBookingService _bookingService;
 
-    public DetailsModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
+    public Booking? Booking { get; set; }
+
+    public List<RecordChangeEntry> Changes { get; set; } = new();
+
+
+    public DetailsModel(IBookingService bookingService)
     {
-        _context = context;
+        _bookingService = bookingService;
     }
-
-    public Booking Booking { get; set; } = default!;
-
-    public List<Audit> Changes { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -25,27 +26,18 @@ public class DetailsModel : PageModel
             return NotFound();
         }
 
-        var booking = await _context.Booking
-            .Include(b => b.Items)
-            .ThenInclude(i => i.Identifiers)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var bookingId = new Booking.BookingId(id.Value);
+
+        var booking = await _bookingService.GetById(bookingId);
         if (booking == null)
         {
             return NotFound();
         }
-        else
-        {
-            Booking = booking;
-        }
 
-        Changes = await _context.Audits
-            .Where(a => a.EntityId == id)
-            .Where(a => !a.PropertyName.Equals("CreatedDate"))
-            .Where(a => !a.PropertyName.Equals("UpdatedDate"))
-            .Where(a => !a.PropertyName.Equals("CreatedBy"))
-            .Where(a => !a.PropertyName.Equals("UpdatedBy"))
-            .OrderByDescending(a => a.ChangeTimeUtc)
-            .ToListAsync();
+        Booking = booking;
+
+        var changes = await _bookingService.ChangesForBooking(bookingId);
+        Changes = changes.ToList();
 
         return Page();
     }

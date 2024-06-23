@@ -3,6 +3,8 @@
 
 @{
     ViewData["Title"] = "Delete";
+
+    var booking = Model.Booking;
 }
 
 <h1>Delete</h1>
@@ -10,99 +12,117 @@
 <h3>Are you sure you want to delete this?</h3>
 <div>
     <h4>Booking</h4>
-    <hr />
+    <hr/>
+
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.BookingStart)
+            @Html.DisplayNameFor(model => booking.BookingStart)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.BookingStart)
+            @Html.DisplayFor(model => booking.BookingStart)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.EventStart)
+            @Html.DisplayNameFor(model => booking.EventStart)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.EventStart)
+            @Html.DisplayFor(model => booking.EventStart)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.EventEnd)
+            @Html.DisplayNameFor(model => booking.EventEnd)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.EventEnd)
+            @Html.DisplayFor(model => booking.EventEnd)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.BookingEnd)
+            @Html.DisplayNameFor(model => booking.BookingEnd)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.BookingEnd)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.BookedBy)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.BookedBy)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.BookedFor)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.BookedFor)
+            @Html.DisplayFor(model => booking.BookingEnd)
         </dd>
 
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.SjaEventType)
+            @Html.DisplayNameFor(model => booking.BookedBy)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.SjaEventType)
+            @Html.DisplayFor(model => booking.BookedBy)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.SjaEventDipsId)
+            @Html.DisplayNameFor(model => booking.BookedFor)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.SjaEventDipsId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.SjaEventName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.SjaEventName)
+            @Html.DisplayFor(model => booking.BookedFor)
         </dd>
 
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.Notes)
+            @Html.DisplayNameFor(model => booking.SjaEventType)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.Notes)
+            @Html.DisplayFor(model => booking.SjaEventType)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.CreatedDate)
+            @Html.DisplayNameFor(model => booking.SjaEventDipsId)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.CreatedDate)
+            @Html.DisplayFor(model => booking.SjaEventDipsId)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.UpdatedDate)
+            @Html.DisplayNameFor(model => booking.SjaEventName)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.UpdatedDate)
+            @Html.DisplayFor(model => booking.SjaEventName)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => booking.Notes)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => booking.Notes)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => booking.RecordMetaData.CreatedAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => booking.RecordMetaData.CreatedAt)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.CreatedBy)
+            @Html.DisplayNameFor(model => booking.RecordMetaData.CreatedBy)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.CreatedBy)
+            @Html.DisplayFor(model => booking.RecordMetaData.CreatedBy)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => booking.RecordMetaData.UpdatedAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => booking.RecordMetaData.UpdatedAt)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Booking.UpdatedBy)
+            @Html.DisplayNameFor(model => booking.RecordMetaData.UpdatedBy)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Booking.UpdatedBy)
+            @Html.DisplayFor(model => booking.RecordMetaData.UpdatedBy)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => booking.RecordMetaData.DeletedAt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => booking.RecordMetaData.DeletedAt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => booking.RecordMetaData.DeletedBy)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => booking.RecordMetaData.DeletedBy)
         </dd>
     </dl>
-    
+
     <form method="post">
-        <input type="hidden" asp-for="Booking.Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <input type="hidden" asp-for="Booking.Id.Value"/>
+        <input type="submit" value="Delete" class="btn btn-danger"/> |
         <a asp-page="./Index">Back to List</a>
     </form>
+
 </div>

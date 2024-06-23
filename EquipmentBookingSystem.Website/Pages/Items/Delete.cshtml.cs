@@ -1,21 +1,21 @@
-using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentBookingSystem.Website.Pages.Items;
 
 public class DeleteModel : PageModel
 {
-    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+    private readonly IItemService _itemService;
 
-    public DeleteModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
+    public Item Item { get; set; } = default!;
+
+    public DeleteModel(IItemService itemService)
     {
-        _context = context;
+        _itemService = itemService;
     }
 
-    [BindProperty]
-    public Item Item { get; set; } = default!;
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -24,17 +24,16 @@ public class DeleteModel : PageModel
             return NotFound();
         }
 
-        var item = await _context.Item
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var itemId = new Item.ItemId(id.Value);
 
+        var item = await _itemService.GetById(itemId);
         if (item == null)
         {
             return NotFound();
         }
-        else
-        {
-            Item = item;
-        }
+
+        Item = item;
+
         return Page();
     }
 
@@ -45,13 +44,8 @@ public class DeleteModel : PageModel
             return NotFound();
         }
 
-        var item = await _context.Item.FindAsync(id);
-        if (item != null)
-        {
-            Item = item;
-            _context.Item.Remove(Item); // TODO: Soft delete with record of history
-            await _context.SaveChangesAsync();
-        }
+        var itemId = new Item.ItemId(id.Value);
+        await _itemService.Delete(itemId);
 
         return RedirectToPage("./Index");
     }

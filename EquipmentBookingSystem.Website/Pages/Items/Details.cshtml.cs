@@ -1,22 +1,31 @@
-using EquipmentBookingSystem.Website.Models;
+using EquipmentBookingSystem.Application.Services;
+using EquipmentBookingSystem.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace EquipmentBookingSystem.Website.Pages.Items;
 
 public class DetailsModel : PageModel
 {
-    private readonly EquipmentBookingSystem.Website.Data.WebsiteDbContext _context;
+    private readonly IItemService _itemService;
 
-    public DetailsModel(EquipmentBookingSystem.Website.Data.WebsiteDbContext context)
-    {
-        _context = context;
-    }
+    private readonly IBookingService _bookingService;
+
+    private readonly IUserService _userService;
 
     public Item Item { get; set; } = default!;
 
-    public List<Audit> Changes { get; set; } = new();
+    public List<Booking> BookingsForItem { get; set; } = new();
+
+    public List<RecordChangeEntry> Changes { get; set; } = new();
+
+    public DetailsModel(IItemService itemService, IBookingService bookingService, IUserService userService)
+    {
+        _itemService = itemService;
+        _bookingService = bookingService;
+        _userService = userService;
+    }
+
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -25,27 +34,22 @@ public class DetailsModel : PageModel
             return NotFound();
         }
 
-        var item = await _context.Item
-            .Include(i => i.Bookings)
-            .Include(i => i.Identifiers)
-            .FirstOrDefaultAsync(m => m.Id == id);
+
+        var itemId = new Item.ItemId(id.Value);
+
+        var item = await _itemService.GetById(itemId);
         if (item == null)
         {
             return NotFound();
         }
-        else
-        {
-            Item = item;
-        }
 
-        Changes = await _context.Audits
-            .Where(a => a.EntityId == id)
-            .Where(a => !a.PropertyName.Equals("CreatedDate"))
-            .Where(a => !a.PropertyName.Equals("UpdatedDate"))
-            .Where(a => !a.PropertyName.Equals("CreatedBy"))
-            .Where(a => !a.PropertyName.Equals("UpdatedBy"))
-            .OrderByDescending(a => a.ChangeTimeUtc)
-            .ToListAsync();
+        Item = item;
+
+        var currentUser = _userService.GetCurrentUser();
+        BookingsForItem = (await _bookingService.BookingsForItem(currentUser, itemId)).ToList();
+
+        var changes = await _itemService.ChangesForItem(itemId);
+        Changes = changes.ToList();
 
         return Page();
     }
