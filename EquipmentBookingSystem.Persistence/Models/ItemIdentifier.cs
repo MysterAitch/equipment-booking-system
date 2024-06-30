@@ -43,7 +43,7 @@ public class ItemIdentifier
     {
         var itemIdentifierEntity = new EquipmentBookingSystem.Persistence.Models.ItemIdentifier()
         {
-            Id = identifier.Id?.Value ?? throw new ApplicationException("ItemIdentifierId is required"),
+            Id = identifier.Id?.Value ?? Guid.NewGuid(),
             Type = identifier.Type,
             Value = identifier.Value,
             From = identifier.From,

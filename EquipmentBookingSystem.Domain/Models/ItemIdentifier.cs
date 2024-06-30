@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using StronglyTypedIds;
 
@@ -18,8 +17,6 @@ public class ItemIdentifier
 
     [DataType(DataType.Date)]
     public DateTime? To { get; set; }
-
-    public HashSet<Item> Items { get; } = new();
 
 }
 

@@ -176,7 +176,7 @@ public class BookingService : IBookingService
             .ToListAsync();
 
         var availableItemIds = availableItems.Select(x => x.Id).ToHashSet();
-        if(selectedItemIds.Any(guid => !availableItemIds.Contains(guid)))
+        if (selectedItemIds.Any(guid => !availableItemIds.Contains(guid)))
         {
             throw new InvalidOperationException("Item not found, not able to attache to booking");
         }

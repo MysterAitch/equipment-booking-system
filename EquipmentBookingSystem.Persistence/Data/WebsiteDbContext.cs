@@ -146,7 +146,7 @@ public class WebsiteDbContext : DbContext
             }
         }
 
-        // AuditEntryForChanges();
+        AuditEntryForChanges();
 
         return base.SaveChangesAsync(cancellationToken);
     }

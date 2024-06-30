@@ -92,6 +92,12 @@ dotnet ef migrations add AddItemNotes
 dotnet ef migrations add AddBookingNotes
 ```
 
+```shell
+## CD to the website project (to pick up EF secrets and configuration)
+#cd EquipmentBookingSystem.Website
+dotnet ef migrations add Test123 --context WebsiteDbContext --project ../EquipmentBookingSystem.Persistence --startup-project .
+```
+
 ## Update the database
 
 ```shell
@@ -105,6 +111,11 @@ Note, requires az cli if using Azure AD authentication (e.g., locally)
 
 ```shell
 dotnet ef database update
+```
+```shell
+## CD to the website project (to pick up EF secrets and configuration)
+#cd EquipmentBookingSystem.Website
+dotnet ef database update --context WebsiteDbContext --project ../EquipmentBookingSystem.Persistence --startup-project .
 ```
 
 Check for pending updates -- TODO: Include this in a deployment pipeline (note: would need database credentials adding to the action)

@@ -111,9 +111,51 @@ public class ItemService : IItemService
         itemEntity.Model = item.Model;
         itemEntity.DamageNotes = item.DamageNotes;
         itemEntity.Notes = item.Notes;
-        itemEntity.Identifiers = item.Identifiers
+
+        // update the item identifiers
+        // 1. keep the existing identifiers that are in the new identifiers, and clear the rest
+        var submittedItemIdentifierIds = item.Identifiers
+            .Where(x => x.Id.HasValue)
+            .Select(x => x.Id!.Value.Value)
+            .ToHashSet();
+
+        var preExistingItemIdentifiers = itemEntity.Identifiers
+            .Where(x => submittedItemIdentifierIds.Contains(x.Id))
+            .ToHashSet();
+
+        // Update based on ID
+        foreach (var preExistingItemIdentifier in preExistingItemIdentifiers)
+        {
+            var submittedItemIdentifier = item.Identifiers
+                .FirstOrDefault(x => x.Id is not null && x.Id?.Value == preExistingItemIdentifier.Id);
+
+            if (submittedItemIdentifier is not null)
+            {
+                preExistingItemIdentifier.Type = submittedItemIdentifier.Type;
+                preExistingItemIdentifier.Value = submittedItemIdentifier.Value;
+                preExistingItemIdentifier.From = submittedItemIdentifier.From;
+                preExistingItemIdentifier.To = submittedItemIdentifier.To;
+            }
+        }
+
+        // Write back the pre-existing (maybe modified) item identifiers
+        itemEntity.Identifiers = preExistingItemIdentifiers;
+
+
+        // 2. add the new identifiers
+        var newIdentifiers = item.Identifiers
+            .Where(x => x.Id is null)
             .Select(EquipmentBookingSystem.Persistence.Models.ItemIdentifier.FromDomain)
             .ToHashSet();
+
+        itemEntity.Identifiers.UnionWith(newIdentifiers);
+
+        // 3. Mark newly added identifiers as added
+        foreach (var newIdentifier in newIdentifiers)
+        {
+            _context.Add(newIdentifier);
+        }
+
 
         // save the changes
         await _context.SaveChangesAsync();

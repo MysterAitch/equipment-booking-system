@@ -120,6 +120,7 @@ public class EditModel : PageModel
         var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
         DataModel.UpdateItem(item, Data);
 
+
         await _itemService.Update(itemId, currentUser, item);
         // await _itemService.UpdateIdentifiersForItem(currentUser, itemId, selectedIdentifiersIds);
 
@@ -154,7 +155,7 @@ public class EditModel : PageModel
 
         public class Identifier
         {
-            public Guid Id { get; set; }
+            public Guid? Id { get; set; }
             public string Type { get; set; } = string.Empty;
             public string Value { get; set; } = string.Empty;
             public DateTime? From { get; set; }
@@ -188,49 +189,52 @@ public class EditModel : PageModel
             item.Model = data.Model;
             item.DamageNotes = data.DamageNotes;
             item.Notes = data.Notes;
+
+            UpdateIdentifiers(item, data);
         }
 
-        // public static void UpdateIdentifiers(Item item, DataModel data)
-        // {
-        //     var submittedIdentifiers = data.Identifiers.ToList();
-        //
-        //     // Update oldIdentifiers -- update where Id matches, remove where not in OrderedIdentifiers, and add where not in oldIdentifiers (inserting Id)
-        //     var oldIdentifiers = item.Identifiers.ToList();
-        //     foreach (var oldIdentifier in oldIdentifiers)
-        //     {
-        //         var orderedIdentifier = data.OrderedIdentifiers.SingleOrDefault(i => i.Id == oldIdentifier.Id);
-        //         if (orderedIdentifier == null)
-        //         {
-        //             item.Identifiers.Remove(oldIdentifier);
-        //         }
-        //         else
-        //         {
-        //             oldIdentifier.Type = orderedIdentifier.Type;
-        //             oldIdentifier.Value = orderedIdentifier.Value;
-        //             oldIdentifier.From = orderedIdentifier.From;
-        //             oldIdentifier.To = orderedIdentifier.To;
-        //         }
-        //     }
-        //
-        //     foreach (var orderedIdentifier in data.OrderedIdentifiers)
-        //     {
-        //         if (oldIdentifiers.All(i => i.Id != orderedIdentifier.Id))
-        //         {
-        //             // This is a new identifier, not previously seen -- therefore add it
-        //             var itemIdentifier = new ItemIdentifier()
-        //             {
-        //                 Id = Guid.Empty == orderedIdentifier.Id?.Value
-        //                     ? new ItemIdentifierId(Guid.NewGuid())
-        //                     : orderedIdentifier.Id,
-        //                 Type = orderedIdentifier.Type,
-        //                 Value = orderedIdentifier.Value,
-        //                 From = orderedIdentifier.From,
-        //                 To = orderedIdentifier.To,
-        //             };
-        //             item.Identifiers.Add(itemIdentifier);
-        //
-        //         }
-        //     }
-        // }
+        internal static void UpdateIdentifiers(Item item, DataModel data)
+        {
+            // var submittedIdentifiers = data.Identifiers.ToList();
+
+            // Update oldIdentifiers -- update where Id matches, remove where not in OrderedIdentifiers, and add where not in oldIdentifiers (inserting Id)
+            var oldIdentifiers = item.Identifiers.ToList();
+            foreach (var oldIdentifier in oldIdentifiers)
+            {
+                var orderedIdentifier = data.OrderedIdentifiers.SingleOrDefault(i => i.Id is not null && i.Id == oldIdentifier.Id?.Value);
+                if (orderedIdentifier == null)
+                {
+                    item.Identifiers.Remove(oldIdentifier);
+                }
+                else
+                {
+                    oldIdentifier.Type = orderedIdentifier.Type;
+                    oldIdentifier.Value = orderedIdentifier.Value;
+                    oldIdentifier.From = orderedIdentifier.From;
+                    oldIdentifier.To = orderedIdentifier.To;
+                }
+            }
+
+            foreach (var orderedIdentifier in data.OrderedIdentifiers)
+            {
+                if (oldIdentifiers.All(i => i.Id is not null && i.Id?.Value != orderedIdentifier.Id))
+                {
+                    // This is a new identifier, not previously seen -- therefore add it
+                    var newId = orderedIdentifier.Id is null
+                        ? null as ItemIdentifierId?
+                        : new ItemIdentifierId(orderedIdentifier.Id.Value);
+
+                    var itemIdentifier = new ItemIdentifier()
+                    {
+                        Id = newId,
+                        Type = orderedIdentifier.Type,
+                        Value = orderedIdentifier.Value,
+                        From = orderedIdentifier.From,
+                        To = orderedIdentifier.To,
+                    };
+                    item.Identifiers.Add(itemIdentifier);
+                }
+            }
+        }
     }
 }

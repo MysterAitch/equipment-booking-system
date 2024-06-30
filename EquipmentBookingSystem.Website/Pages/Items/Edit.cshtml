@@ -82,7 +82,7 @@
                                 // Deliberately do not handle the ID value here, as this should be a new value
                                 const idInput = document.createElement('input');
                                 idInput.type = name === 'From' || name === 'To' ? 'date' : 'text';
-                                idInput.name = `OrderedIdentifiers[${existingCount}].${name}`; // this format helps to bind array of inputs on the server side
+                                idInput.name = `Data.OrderedIdentifiers[${existingCount}].${name}`; // this format helps to bind array of inputs on the server side
                                 idInput.className = 'form-control';
 
                                 if(name === "From") {
@@ -107,8 +107,16 @@
                             idBlock.appendChild(idButton);
 
                             document.getElementById('identifiers').appendChild(idBlock);
+
+                            // Should be redundant, but included just in case:
+                            reindexIdentifierBlocks();
                         }
 
+                        /*
+                        * CAUTION: Removing entries can lead to non-sequential numbers, which breaks the model binding (values get dropped).
+                        * For this reason, re-indexing the identifiers is necessary.
+                        * Note that the ID value is included as a hidden field, which allows tracking of the original values (update existing, vs delete and new).
+                        */
                         function removeIdentifier(button) {
                             // first ancestor with class identifier-block
                             const containerBlock = button.closest('.identifier-block');
@@ -116,6 +124,19 @@
                             // remove container element from it's parent
                             const idBlock = containerBlock.parentNode;
                             idBlock.removeChild(containerBlock);
+
+                            // Reindex identifier blocks after removal
+                            reindexIdentifierBlocks();
+                        }
+
+                        function reindexIdentifierBlocks() {
+                            const identifierBlocks = document.querySelectorAll('#identifiers .identifier-block');
+
+                            identifierBlocks.forEach((block, index) => {
+                                block.querySelectorAll('input').forEach(input => {
+                                    input.name = input.name.replace(/Data.OrderedIdentifiers\[\d+\]/, `Data.OrderedIdentifiers[${index}]`);
+                                });
+                            });
                         }
                     </script>
 
