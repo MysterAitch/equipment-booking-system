@@ -48,23 +48,6 @@ public class BookingService : IBookingService
             bookingEntity.SjaEventType = booking.SjaEventType;
             bookingEntity.Notes = booking.Notes ?? string.Empty;
 
-            // Remove items that are not in the updated booking
-            // Note: Cannot remove and re-add, because entity framework will be tracking the objects
-            // "InvalidOperationException: The instance of entity type 'Item' cannot be tracked because another instance with the key value '{Id: [...]}' is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached"
-            var newIds = booking.Items.Select(item => item.Id?.Value ?? throw new NullReferenceException(nameof(item.Id))).ToHashSet();
-            bookingEntity.Items.RemoveWhere(item => newIds.Contains(item.Id));
-
-
-            // Add items that are in the updated booking but not in the current booking
-            var currentIds = bookingEntity.Items.Select(item => new ItemId(item.Id)).ToHashSet();
-            foreach (var item in booking.Items
-                         .Where(item => item.Id is not null && !currentIds.Contains(item.Id.Value))
-                     )
-            {
-                bookingEntity.Items.Add(EquipmentBookingSystem.Persistence.Models.Item.FromDomain(item));
-            }
-
-
             _context.Update(bookingEntity);
             await _context.SaveChangesAsync();
         }
@@ -174,5 +157,36 @@ public class BookingService : IBookingService
             .Select(booking => booking.ToDomain());
 
         return domainBookings;
+    }
+
+    public Task UpdateItems(BookingId bookingId, List<Guid> selectedItemIds)
+    {
+        var bookingEntity = _context.Booking
+            .Include(b => b.Items)
+            .FirstOrDefault(m => m.Id == bookingId.Value);
+
+        if (bookingEntity is null)
+        {
+            throw new InvalidOperationException("Booking not found");
+        }
+
+
+        var submittedIds = bookingEntity.Items.Select(item => item.Id).ToHashSet();
+        var currentIds = bookingEntity.Items.Select(item => item.Id).ToHashSet();
+
+        // Remove items that are not in the updated booking
+        // Note: Cannot remove and re-add, because entity framework will be tracking the objects
+        // "InvalidOperationException: The instance of entity type 'Item' cannot be tracked because another instance with the key value '{Id: [...]}' is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached"
+        bookingEntity.Items.RemoveWhere(item => submittedIds.Contains(item.Id));
+
+        // Add items that are in the updated booking but not in the current booking
+        var newIds = bookingEntity.Items.Where(item => !currentIds.Contains(item.Id));
+        foreach (var item in newIds)
+        {
+            bookingEntity.Items.Add(item);
+        }
+
+        _context.Update(bookingEntity);
+        return _context.SaveChangesAsync();
     }
 }

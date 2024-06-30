@@ -10,47 +10,20 @@ namespace EquipmentBookingSystem.Website.Pages.Bookings;
 public class EditModel : PageModel
 {
     private readonly IBookingService _bookingService;
+    private readonly IItemService _itemService;
     private readonly IUserService _userService;
 
-    public EditModel(IBookingService bookingService, IUserService userService)
+    public EditModel(IBookingService bookingService, IItemService itemService, IUserService userService)
     {
         _bookingService = bookingService;
+        _itemService = itemService;
         _userService = userService;
     }
 
-    [BindProperty]
-    public Guid BookingId { get; set; }
 
     [BindProperty]
-    public DateTime EventStart { get; set; }
+    public DataModel Data { get; set; } = new();
 
-    [BindProperty]
-    public DateTime EventEnd { get; set; }
-
-    [BindProperty]
-    public DateTime BookingStart { get; set; }
-
-    [BindProperty]
-    public DateTime BookingEnd { get; set; }
-
-    [BindProperty]
-    public string BookedFor { get; set; } = string.Empty;
-
-    [BindProperty]
-    public string SjaEventDipsId { get; set; } = string.Empty;
-
-    [BindProperty]
-    public string SjaEventName { get; set; } = string.Empty;
-
-    [BindProperty]
-    public string SjaEventType { get; set; } = string.Empty;
-
-    [BindProperty]
-    public string Notes { get; set; } = string.Empty;
-
-
-    [BindProperty]
-    public List<CheckBoxListItem> Options { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -66,22 +39,11 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        BookingId = bookingId.Value;
-        BookingStart = booking.BookingStart;
-        EventStart = booking.EventStart;
-        EventEnd = booking.EventEnd;
-        BookingEnd = booking.BookingEnd;
-        BookedFor = booking.BookedFor ?? string.Empty;
-        Notes = booking.Notes;
-
-        SjaEventName = booking.SjaEventName;
-        SjaEventDipsId = booking.SjaEventDipsId;
-        SjaEventType = booking.SjaEventType;
-
+        Data = DataModel.FromDomain(booking);
 
         var items = await _bookingService
             .ItemsPotentiallyAvailableForBooking(bookingId);
-        Options = items
+        Data.Options = items
             .OrderBy(i => i.DisplayName())
             .Select(s => new CheckBoxListItem()
             {
@@ -110,36 +72,99 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
-
         if (!ModelState.IsValid)
         {
+            // Redisplay the form with the submitted data
             return Page();
         }
 
-        booking.BookingStart = BookingStart;
-        booking.EventStart = EventStart;
-        booking.EventEnd = EventEnd;
-        booking.BookingEnd = BookingEnd;
-        booking.BookedFor = BookedFor;
-        booking.Notes = Notes;
+        DataModel.UpdateBooking(booking, Data);
 
-        booking.SjaEventName = SjaEventName;
-        booking.SjaEventDipsId = SjaEventDipsId;
-        booking.SjaEventType = SjaEventType;
+        var items = (await _bookingService
+            .ItemsPotentiallyAvailableForBooking(bookingId)).ToList();
 
-        var items = await _bookingService
-            .ItemsPotentiallyAvailableForBooking(bookingId);
+        var selectedItemIds = Data.Options
+            .Where(o => o.IsChecked)
+            .Select(o => o.Id)
+            .ToList();
 
-        // TODO: Update to not require full Item objects -- just the item IDs.
-        booking.Items.Clear();
-        items.Where(i => Options.Any(o => o.Id == i.Id.Value.Value && o.IsChecked))
-            .ToList()
-            .ForEach(i => booking.Items.Add(i));
+        var selectedButUnavailableItemIds = selectedItemIds
+            .Except(items.Select(i => i.Id.Value.Value))
+            .ToList();
+
+        if (selectedButUnavailableItemIds.Any())
+        {
+            // Attempting to book an item that is not available
+            // TODO: Show user a message -- add an error and return Page(), maybe?
+            return BadRequest();
+        }
 
 
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
         await _bookingService.Update(bookingId, currentUser, booking);
 
-        return RedirectToPage("./Details", new { id = booking.Id.Value });
+        await _bookingService.UpdateItems(bookingId, selectedItemIds);
+
+        return RedirectToPage("./Details", new { id = booking.Id });
     }
+
+
+
+    public class DataModel
+    {
+        public Guid BookingId { get; set; }
+
+        public DateTime EventStart { get; set; }
+
+        public DateTime EventEnd { get; set; }
+
+        public DateTime BookingStart { get; set; }
+
+        public DateTime BookingEnd { get; set; }
+
+        public string BookedFor { get; set; } = string.Empty;
+
+        public string SjaEventDipsId { get; set; } = string.Empty;
+
+        public string SjaEventName { get; set; } = string.Empty;
+
+        public string SjaEventType { get; set; } = string.Empty;
+
+        public string Notes { get; set; } = string.Empty;
+
+        public List<CheckBoxListItem> Options { get; set; } = new();
+
+        internal static DataModel FromDomain(Booking booking) => new()
+        {
+            BookingId = booking.Id?.Value ?? throw new NullReferenceException(),
+
+            BookingStart = booking.BookingStart,
+            EventStart = booking.EventStart,
+            EventEnd = booking.EventEnd,
+            BookingEnd = booking.BookingEnd,
+            BookedFor = booking.BookedFor ?? string.Empty,
+            Notes = booking.Notes,
+
+            SjaEventName = booking.SjaEventName,
+            SjaEventDipsId = booking.SjaEventDipsId,
+            SjaEventType = booking.SjaEventType
+        };
+
+        internal static void UpdateBooking(Booking booking, DataModel data)
+        {
+            booking.BookingStart = data.BookingStart;
+            booking.EventStart = data.EventStart;
+            booking.EventEnd = data.EventEnd;
+            booking.BookingEnd = data.BookingEnd;
+            booking.BookedFor = data.BookedFor;
+            booking.Notes = data.Notes;
+
+            booking.SjaEventName = data.SjaEventName;
+            booking.SjaEventDipsId = data.SjaEventDipsId;
+            booking.SjaEventType = data.SjaEventType;
+        }
+    }
+
+
+
 }

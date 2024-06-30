@@ -58,8 +58,6 @@ public class Item : BaseEntity
             Model = item.Model,
             DamageNotes = item.DamageNotes,
             Notes = item.Notes,
-            CreatedDate = item.RecordMetaData.CreatedAt,
-            UpdatedDate = item.RecordMetaData.UpdatedAt,
         };
 
         itemEntity.Identifiers = item.Identifiers

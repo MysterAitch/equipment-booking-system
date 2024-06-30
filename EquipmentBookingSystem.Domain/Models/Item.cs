@@ -28,9 +28,9 @@ public class Item
 
     public IEnumerable<ItemIdentifier> CurrentIssis => CurrentIdentifiers.Where(i => i.Type == "ISSI");
 
-    public String? DamageNotes { get; set; } = string.Empty;
+    public string DamageNotes { get; set; } = string.Empty;
 
-    public String? Notes { get; set; } = string.Empty;
+    public string Notes { get; set; } = string.Empty;
 
 
 

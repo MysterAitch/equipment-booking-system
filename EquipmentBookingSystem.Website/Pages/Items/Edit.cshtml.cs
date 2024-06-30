@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using EquipmentBookingSystem.Application.Services;
 using EquipmentBookingSystem.Domain.Models;
 using EquipmentBookingSystem.Website.Services;
@@ -18,22 +19,9 @@ public class EditModel : PageModel
         _userService = userService;
     }
 
-    public Guid ItemId { get; set; }
+    [BindProperty]
+    public DataModel Data { get; set; } = new();
 
-    public string Manufacturer { get; set; } = string.Empty;
-
-    public string Model { get; set; } = string.Empty;
-
-    public HashSet<Booking> Bookings { get; set; } = new();
-
-    public HashSet<ItemIdentifier> Identifiers { get; set; } = new();
-
-    public String? DamageNotes { get; set; } = string.Empty;
-
-    public String? Notes { get; set; } = string.Empty;
-
-
-    [BindProperty] public List<ItemIdentifier> OrderedIdentifiers { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
@@ -49,26 +37,26 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        ItemId = itemId.Value;
-        Manufacturer = item.Manufacturer;
-        Model = item.Model;
-        DamageNotes = item.DamageNotes;
-        Notes = item.Notes;
+        Data.ItemId = itemId.Value;
+        Data.Manufacturer = item.Manufacturer;
+        Data.Model = item.Model;
+        Data.DamageNotes = item.DamageNotes;
+        Data.Notes = item.Notes;
 
         // TODO: Expand with view model for identifiers
-        Identifiers = item.Identifiers;
+        Data.Identifiers = item.Identifiers;
 
 
-        OrderedIdentifiers = item.Identifiers
+        Data.OrderedIdentifiers = item.Identifiers
             .OrderBy(i => i.Type)
             .ThenBy(i => i.From)
             .ThenBy(i => i.To)
             .ThenBy(i => i.Value)
             .ToList();
 
-        if (OrderedIdentifiers.Count == 0)
+        if (Data.OrderedIdentifiers.Count == 0)
         {
-            OrderedIdentifiers.Add(new ItemIdentifier()
+            Data.OrderedIdentifiers.Add(new ItemIdentifier()
             {
                 Id = new ItemIdentifierId(Guid.NewGuid()),
                 Type = "Serial Number",
@@ -77,7 +65,7 @@ public class EditModel : PageModel
                 To = null,
             });
 
-            OrderedIdentifiers.Add(new ItemIdentifier()
+            Data.OrderedIdentifiers.Add(new ItemIdentifier()
             {
                 Id = new ItemIdentifierId(Guid.NewGuid()),
                 Type = "ProCloud Asset ID",
@@ -86,7 +74,7 @@ public class EditModel : PageModel
                 To = null,
             });
 
-            OrderedIdentifiers.Add(new ItemIdentifier()
+            Data.OrderedIdentifiers.Add(new ItemIdentifier()
             {
                 Id = new ItemIdentifierId(Guid.NewGuid()),
                 Type = "Call Sign",
@@ -95,7 +83,7 @@ public class EditModel : PageModel
                 To = null,
             });
 
-            OrderedIdentifiers.Add(new ItemIdentifier()
+            Data.OrderedIdentifiers.Add(new ItemIdentifier()
             {
                 Id = new ItemIdentifierId(Guid.NewGuid()),
                 Type = "ISSI",
@@ -127,7 +115,7 @@ public class EditModel : PageModel
 
         if (!ModelState.IsValid)
         {
-            OrderedIdentifiers = item.Identifiers
+            Data.OrderedIdentifiers = item.Identifiers
                 .OrderBy(i => i.From)
                 .ThenBy(i => i.To)
                 .ThenBy(i => i.Type)
@@ -138,17 +126,17 @@ public class EditModel : PageModel
         }
 
 
-        item.Manufacturer = Manufacturer;
-        item.Model = Model;
-        item.DamageNotes = DamageNotes;
-        item.Notes = Notes;
+        item.Manufacturer = Data.Manufacturer;
+        item.Model = Data.Model;
+        item.DamageNotes = Data.DamageNotes;
+        item.Notes = Data.Notes;
 
 
         // Update oldIdentifiers -- update where Id matches, remove where not in OrderedIdentifiers, and add where not in oldIdentifiers (inserting Id)
         var oldIdentifiers = item.Identifiers.ToList();
         foreach (var oldIdentifier in oldIdentifiers)
         {
-            var orderedIdentifier = OrderedIdentifiers.SingleOrDefault(i => i.Id == oldIdentifier.Id);
+            var orderedIdentifier = Data.OrderedIdentifiers.SingleOrDefault(i => i.Id == oldIdentifier.Id);
             if (orderedIdentifier == null)
             {
                 item.Identifiers.Remove(oldIdentifier);
@@ -162,7 +150,7 @@ public class EditModel : PageModel
             }
         }
 
-        foreach (var orderedIdentifier in OrderedIdentifiers)
+        foreach (var orderedIdentifier in Data.OrderedIdentifiers)
         {
             if (oldIdentifiers.All(i => i.Id != orderedIdentifier.Id))
             {
@@ -186,5 +174,44 @@ public class EditModel : PageModel
         await _itemService.Update(itemId, currentUser, item);
 
         return RedirectToPage("./Details", new { id = item.Id?.Value ?? throw new Exception("Item ID not found") });
+    }
+
+
+
+    public class DataModel
+    {
+        public Guid ItemId { get; set; }
+
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Manufacturer { get; set; } = string.Empty;
+
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Model { get; set; } = string.Empty;
+
+        public HashSet<Booking> Bookings { get; set; } = new();
+
+        public HashSet<ItemIdentifier> Identifiers { get; set; } = new();
+
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string DamageNotes { get; set; } = string.Empty;
+
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string Notes { get; set; } = string.Empty;
+
+        public List<ItemIdentifier> OrderedIdentifiers { get; set; } = new();
+
+        public Item ToDomain()
+        {
+            return new Item
+            {
+                Id = new ItemId(ItemId),
+                Manufacturer = Manufacturer,
+                Model = Model,
+                DamageNotes = DamageNotes,
+                Notes = Notes,
+                Identifiers = Identifiers,
+            };
+        }
+
     }
 }

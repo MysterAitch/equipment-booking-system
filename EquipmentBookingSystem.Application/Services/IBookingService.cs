@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EquipmentBookingSystem.Domain.Models;
@@ -51,4 +52,5 @@ public interface IBookingService
 
     Task<IEnumerable<Booking>> BookingsForItem(User? user, ItemId itemId);
     Task<IEnumerable<Booking>> BookingsForItems(User currentUser, List<ItemId> itemIds);
+    Task UpdateItems(BookingId bookingId, List<Guid> selectedItemIds);
 }
