@@ -29,7 +29,7 @@ public class ItemService : IItemService
         return newItemEntity;
     }
 
-    public async Task<Item?> GetById(Item.ItemId? itemId)
+    public async Task<Item?> GetById(ItemId? itemId)
     {
         if (itemId is null)
         {
@@ -39,7 +39,7 @@ public class ItemService : IItemService
         var itemEntity = await _context.Item
             .Include(i => i.Bookings)
             .Include(i => i.Identifiers)
-            .FirstOrDefaultAsync(m => m.Id == itemId.Value);
+            .FirstOrDefaultAsync(m => m.Id == itemId.Value.Value);
 
         if (itemEntity is null)
         {
@@ -51,7 +51,7 @@ public class ItemService : IItemService
         return domainItem;
     }
 
-    public async Task Delete(Item.ItemId itemId)
+    public async Task Delete(ItemId itemId)
     {
         var itemEntity = await _context.Item
             .FirstOrDefaultAsync(m => m.Id == itemId.Value);
@@ -64,7 +64,7 @@ public class ItemService : IItemService
         }
     }
 
-    public async Task<IEnumerable<RecordChangeEntry>> ChangesForItem(Item.ItemId itemId)
+    public async Task<IEnumerable<RecordChangeEntry>> ChangesForItem(ItemId itemId)
     {
         var changeEntities = await _context.Audits
             .Where(a => a.EntityId == itemId.Value)
@@ -93,7 +93,7 @@ public class ItemService : IItemService
         return recordChangeEntries;
     }
 
-    public async Task Update(Item.ItemId itemId, User currentUser, Item item)
+    public async Task Update(ItemId itemId, User currentUser, Item item)
     {
         // get the item entity
         var itemEntity = await _context.Item
@@ -134,7 +134,7 @@ public class ItemService : IItemService
 
         // get the new item identifier entity
         var newItemIdentifierEntity = await _context.ItemIdentifiers
-            .FirstOrDefaultAsync(m => m.Id == itemIdentifier.Id.Value);
+            .FirstOrDefaultAsync(m => m.Id == itemIdentifier.Id.Value.Value);
 
         // return the new item identifier entity
         return newItemIdentifierEntity!.ToDomain();

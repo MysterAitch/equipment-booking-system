@@ -193,7 +193,7 @@ else
                     @foreach (var item in booking.Items.OrderBy(i => i.DisplayName()))
                     {
                         <li>
-                            <a asp-area="" asp-page="/Items/Details" asp-route-id="@item.Id.Value">
+                            <a asp-area="" asp-page="/Items/Details" asp-route-id="@item.Id">
                                 @item.DisplayName()
                             </a>
                         </li>
@@ -248,7 +248,7 @@ else
     </dl>
 
     <div>
-        <a asp-page="./Edit" asp-route-id="@booking.Id.Value">Edit</a> |
+        <a asp-page="./Edit" asp-route-id="@booking.Id">Edit</a> |
         <a asp-page="./Index">Back to List</a>
     </div>
 

@@ -29,7 +29,7 @@ public class BookingService : IBookingService
         return newBookingEntity!;
     }
 
-    public async Task Update(Booking.BookingId bookingId, User user, Booking booking)
+    public async Task Update(BookingId bookingId, User user, Booking booking)
     {
         var bookingEntity = await _context.Booking
             .Include(b => b.Items)
@@ -56,8 +56,10 @@ public class BookingService : IBookingService
 
 
             // Add items that are in the updated booking but not in the current booking
-            var currentIds = bookingEntity.Items.Select(item => item.Id).ToHashSet();
-            foreach (var item in booking.Items.Where(item => item.Id is not null && !currentIds.Contains(item.Id.Value)))
+            var currentIds = bookingEntity.Items.Select(item => new ItemId(item.Id)).ToHashSet();
+            foreach (var item in booking.Items
+                         .Where(item => item.Id is not null && !currentIds.Contains(item.Id.Value))
+                     )
             {
                 bookingEntity.Items.Add(EquipmentBookingSystem.Persistence.Models.Item.FromDomain(item));
             }
@@ -68,7 +70,7 @@ public class BookingService : IBookingService
         }
     }
 
-    public async Task Delete(Booking.BookingId bookingId)
+    public async Task Delete(BookingId bookingId)
     {
         var bookingEntity = await _context.Booking
             .FirstOrDefaultAsync(m => m.Id == bookingId.Value);
@@ -80,12 +82,17 @@ public class BookingService : IBookingService
         }
     }
 
-    public async Task<Booking?> GetById(Booking.BookingId bookingId)
+    public async Task<Booking?> GetById(BookingId? bookingId)
     {
+        if (bookingId is null)
+        {
+            return null;
+        }
+
         var bookingEntity = await _context.Booking
             .Include(b => b.Items)
             .ThenInclude(i => i.Identifiers)
-            .FirstOrDefaultAsync(m => m.Id == bookingId.Value);
+            .FirstOrDefaultAsync(m => m.Id == bookingId.Value.Value);
 
         if (bookingEntity is null)
         {
@@ -97,7 +104,7 @@ public class BookingService : IBookingService
         return domainBooking;
     }
 
-    public async Task<IEnumerable<RecordChangeEntry>> ChangesForBooking(Booking.BookingId bookingId)
+    public async Task<IEnumerable<RecordChangeEntry>> ChangesForBooking(BookingId bookingId)
     {
         var changeEntities = await _context.Audits
             .Where(a => a.EntityId == bookingId.Value)
@@ -114,7 +121,7 @@ public class BookingService : IBookingService
         return recordChangeEntries;
     }
 
-    public async Task<IEnumerable<Item>> ItemsPotentiallyAvailableForBooking(Booking.BookingId bookingId)
+    public async Task<IEnumerable<Item>> ItemsPotentiallyAvailableForBooking(BookingId bookingId)
     {
         var itemEntities = await _context.Item
             .Include(i => i.Bookings)
@@ -122,7 +129,7 @@ public class BookingService : IBookingService
             .ToListAsync();
 
         var domainItems = itemEntities
-            .Select( booking => booking.ToDomain());
+            .Select(booking => booking.ToDomain());
 
         return domainItems;
     }
@@ -135,12 +142,12 @@ public class BookingService : IBookingService
             .ToListAsync();
 
         var domainBookings = bookingEntities
-            .Select( booking => booking.ToDomain());
+            .Select(booking => booking.ToDomain());
 
         return domainBookings;
     }
 
-    public async Task<IEnumerable<Booking>> BookingsForItem(User? user, Item.ItemId itemId)
+    public async Task<IEnumerable<Booking>> BookingsForItem(User? user, ItemId itemId)
     {
         var bookingEntities = await _context.Booking
             .Include(b => b.Items)
@@ -149,12 +156,12 @@ public class BookingService : IBookingService
             .ToListAsync();
 
         var domainBookings = bookingEntities
-            .Select( booking => booking.ToDomain());
+            .Select(booking => booking.ToDomain());
 
         return domainBookings;
     }
 
-    public async Task<IEnumerable<Booking>> BookingsForItems(User currentUser, List<Item.ItemId> itemIds)
+    public async Task<IEnumerable<Booking>> BookingsForItems(User currentUser, List<ItemId> itemIds)
     {
         var itemIdValues = itemIds.Select(id => id.Value).ToList();
         var bookingEntities = await _context.Booking
@@ -164,7 +171,7 @@ public class BookingService : IBookingService
             .ToListAsync();
 
         var domainBookings = bookingEntities
-            .Select( booking => booking.ToDomain());
+            .Select(booking => booking.ToDomain());
 
         return domainBookings;
     }

@@ -28,7 +28,9 @@ public class IndexModel : PageModel
 
         var itemIds = Items.Select(i => i.Id)
             .Where(id => id is not null)
+            .Cast<ItemId>() // make type inference recognise no null values will be present
             .ToList();
+
         var bookings = await _bookingService.BookingsForItems(currentUser, itemIds);
         BookingsForItems = bookings.ToList();
     }

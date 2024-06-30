@@ -138,7 +138,7 @@
     </dl>
 </div>
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.Item.Id.Value">Edit</a> |
+    <a asp-page="./Edit" asp-route-id="@Model.Item.Id">Edit</a> |
     <a asp-page="./Index">Back to List</a>
 </div>
 
@@ -165,7 +165,7 @@
                                 for @Html.DisplayFor(model => booking.BookedFor)
                                 <small>(approx. @duration.Humanize(2))</small>
                                 -
-                                <a asp-area="" asp-page="/Bookings/Details" asp-route-id="@booking.Id.Value">view</a>
+                                <a asp-area="" asp-page="/Bookings/Details" asp-route-id="@booking.Id">view</a>
                             </li>
                         }
                     </ol>

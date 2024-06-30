@@ -21,12 +21,12 @@ public class DetailsModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
-        if (id == null)
+        if (id == null || id.Value == Guid.Empty)
         {
-            return NotFound();
+            return BadRequest();
         }
 
-        var bookingId = new Booking.BookingId(id.Value);
+        var bookingId = new BookingId(id.Value);
 
         var booking = await _bookingService.GetById(bookingId);
         if (booking == null)

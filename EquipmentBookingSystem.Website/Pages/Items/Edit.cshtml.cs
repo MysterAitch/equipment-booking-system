@@ -37,12 +37,12 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
-        if (id == null)
+        if (id == null || id.Value == Guid.Empty)
         {
-            return NotFound();
+            return BadRequest();
         }
 
-        var itemId = new Item.ItemId(id.Value);
+        var itemId = new ItemId(id.Value);
         var item = await _itemService.GetById(itemId);
         if (item == null)
         {
@@ -70,7 +70,7 @@ public class EditModel : PageModel
         {
             OrderedIdentifiers.Add(new ItemIdentifier()
             {
-                Id = new ItemIdentifier.ItemIdentifierId(Guid.NewGuid()),
+                Id = new ItemIdentifierId(Guid.NewGuid()),
                 Type = "Serial Number",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -79,7 +79,7 @@ public class EditModel : PageModel
 
             OrderedIdentifiers.Add(new ItemIdentifier()
             {
-                Id = new ItemIdentifier.ItemIdentifierId(Guid.NewGuid()),
+                Id = new ItemIdentifierId(Guid.NewGuid()),
                 Type = "ProCloud Asset ID",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -88,7 +88,7 @@ public class EditModel : PageModel
 
             OrderedIdentifiers.Add(new ItemIdentifier()
             {
-                Id = new ItemIdentifier.ItemIdentifierId(Guid.NewGuid()),
+                Id = new ItemIdentifierId(Guid.NewGuid()),
                 Type = "Call Sign",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -97,7 +97,7 @@ public class EditModel : PageModel
 
             OrderedIdentifiers.Add(new ItemIdentifier()
             {
-                Id = new ItemIdentifier.ItemIdentifierId(Guid.NewGuid()),
+                Id = new ItemIdentifierId(Guid.NewGuid()),
                 Type = "ISSI",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -111,12 +111,12 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(Guid? id /*, List<Identifier> identifiers*/)
     {
-        if (id == null)
+        if (id == null || id.Value == Guid.Empty)
         {
-            return NotFound();
+            return BadRequest();
         }
 
-        var itemId = new Item.ItemId(id.Value);
+        var itemId = new ItemId(id.Value);
         var item = await _itemService.GetById(itemId);
         if (item == null)
         {
@@ -170,7 +170,7 @@ public class EditModel : PageModel
                 var itemIdentifier = new ItemIdentifier()
                 {
                     Id = Guid.Empty == orderedIdentifier.Id?.Value
-                        ? new ItemIdentifier.ItemIdentifierId(Guid.NewGuid())
+                        ? new ItemIdentifierId(Guid.NewGuid())
                         : orderedIdentifier.Id,
                     Type = orderedIdentifier.Type,
                     Value = orderedIdentifier.Value,
@@ -185,6 +185,6 @@ public class EditModel : PageModel
 
         await _itemService.Update(itemId, currentUser, item);
 
-        return RedirectToPage("./Details", new {id = item.Id?.Value ?? throw new Exception("Item ID not found")});
+        return RedirectToPage("./Details", new { id = item.Id?.Value ?? throw new Exception("Item ID not found") });
     }
 }

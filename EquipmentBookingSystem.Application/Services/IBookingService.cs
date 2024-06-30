@@ -8,15 +8,15 @@ public interface IBookingService
 {
     Task<Booking> CreateNew(User user, Booking booking);
 
-    Task Update(Booking.BookingId bookingId, User user, Booking booking);
+    Task Update(BookingId bookingId, User user, Booking booking);
 
-    Task Delete(Booking.BookingId bookingId);
+    Task Delete(BookingId bookingId);
 
     // var booking = await _context.Booking
     //     .Include(b => b.Items)
     //     .ThenInclude(i => i.Identifiers)
     //     .FirstOrDefaultAsync(m => m.Id == id);
-    Task<Booking?> GetById(Booking.BookingId bookingId);
+    Task<Booking?> GetById(BookingId? bookingId);
 
     // Task<IEnumerable<Booking>> GetAll();
 
@@ -31,7 +31,7 @@ public interface IBookingService
             .ToListAsync();
      *
      */
-    Task<IEnumerable<RecordChangeEntry>> ChangesForBooking(Booking.BookingId bookingId);
+    Task<IEnumerable<RecordChangeEntry>> ChangesForBooking(BookingId bookingId);
 
     /*
      *  Items = await _context.Item
@@ -39,7 +39,7 @@ public interface IBookingService
             .Include(i => i.Identifiers)
             .ToListAsync();
      */
-    Task<IEnumerable<Item>> ItemsPotentiallyAvailableForBooking(Booking.BookingId bookingId);
+    Task<IEnumerable<Item>> ItemsPotentiallyAvailableForBooking(BookingId bookingId);
 
     /*
         Bookings = await _context.Booking
@@ -49,6 +49,6 @@ public interface IBookingService
     */
     Task<IEnumerable<Booking>> GetVisibleBookings(User user);
 
-    Task<IEnumerable<Booking>> BookingsForItem(User? user, Item.ItemId itemId);
-    Task<IEnumerable<Booking>> BookingsForItems(User currentUser, List<Item.ItemId> itemIds);
+    Task<IEnumerable<Booking>> BookingsForItem(User? user, ItemId itemId);
+    Task<IEnumerable<Booking>> BookingsForItems(User currentUser, List<ItemId> itemIds);
 }

@@ -29,13 +29,13 @@ public class DetailsModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
-        if (id == null)
+        if (id == null || id.Value == Guid.Empty)
         {
-            return NotFound();
+            return BadRequest();
         }
 
 
-        var itemId = new Item.ItemId(id.Value);
+        var itemId = new ItemId(id.Value);
 
         var item = await _itemService.GetById(itemId);
         if (item == null)

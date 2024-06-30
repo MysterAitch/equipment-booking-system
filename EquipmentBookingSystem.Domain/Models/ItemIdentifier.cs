@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using StronglyTypedIds;
 
 namespace EquipmentBookingSystem.Domain.Models;
 
@@ -20,6 +21,8 @@ public class ItemIdentifier
 
     public HashSet<Item> Items { get; } = new();
 
-    public record ItemIdentifierId(Guid Value);
-
 }
+
+[StronglyTypedId(Template.Guid)]
+public partial struct ItemIdentifierId { }
+

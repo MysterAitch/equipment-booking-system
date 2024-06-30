@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using StronglyTypedIds;
 
 namespace EquipmentBookingSystem.Domain.Models;
 
@@ -11,7 +12,7 @@ public class Item
     public string Manufacturer { get; set; } = string.Empty;
 
     public string Model { get; set; } = string.Empty;
-    
+
     public HashSet<ItemIdentifier> Identifiers { get; set; } = new();
 
     public IEnumerable<ItemIdentifier> CurrentIdentifiers => Identifiers
@@ -89,8 +90,8 @@ public class Item
         return val;
     }
 
-
-    public record ItemId(Guid Value);
-
-
 }
+
+
+[StronglyTypedId(Template.Guid)]
+public partial struct ItemId { }

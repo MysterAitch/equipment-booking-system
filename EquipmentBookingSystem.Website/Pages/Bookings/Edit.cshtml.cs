@@ -1,5 +1,6 @@
 using EquipmentBookingSystem.Application.Services;
 using EquipmentBookingSystem.Domain.Models;
+using EquipmentBookingSystem.Website.Pages.Shared;
 using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -53,19 +54,19 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(Guid? id)
     {
-        if (id == null)
+        if (id == null || id.Value == Guid.Empty)
         {
-            return NotFound();
+            return BadRequest();
         }
 
-        var bookingId = new Booking.BookingId(id.Value);
+        var bookingId = new BookingId(id.Value);
         var booking = await _bookingService.GetById(bookingId);
         if (booking == null)
         {
             return NotFound();
         }
 
-        BookingId = booking.Id.Value;
+        BookingId = bookingId.Value;
         BookingStart = booking.BookingStart;
         EventStart = booking.EventStart;
         EventEnd = booking.EventEnd;
@@ -79,12 +80,12 @@ public class EditModel : PageModel
 
 
         var items = await _bookingService
-            .ItemsPotentiallyAvailableForBooking(booking.Id);
+            .ItemsPotentiallyAvailableForBooking(bookingId);
         Options = items
             .OrderBy(i => i.DisplayName())
             .Select(s => new CheckBoxListItem()
             {
-                Id = s.Id.Value,
+                Id = s.Id?.Value ?? throw new NullReferenceException(),
                 Display = s.DisplayName(),
                 IsChecked = booking.Items.Select(x => x.Id).Contains(s.Id) ? true : false
             })
@@ -96,12 +97,12 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(Guid? id, List<Guid> selectedOptions)
     {
-        if (id == null)
+        if (id == null || id.Value == Guid.Empty)
         {
-            return NotFound();
+            return BadRequest();
         }
 
-        var bookingId = new Booking.BookingId(id.Value);
+        var bookingId = new BookingId(id.Value);
         var booking = await _bookingService.GetById(bookingId);
         if (booking == null)
         {
@@ -128,17 +129,17 @@ public class EditModel : PageModel
         booking.SjaEventType = SjaEventType;
 
         var items = await _bookingService
-            .ItemsPotentiallyAvailableForBooking(booking.Id);
+            .ItemsPotentiallyAvailableForBooking(bookingId);
 
         // TODO: Update to not require full Item objects -- just the item IDs.
         booking.Items.Clear();
-        items.Where(i => Options.Any(o => o.Id == i.Id.Value && o.IsChecked))
+        items.Where(i => Options.Any(o => o.Id == i.Id.Value.Value && o.IsChecked))
             .ToList()
             .ForEach(i => booking.Items.Add(i));
 
 
         await _bookingService.Update(bookingId, currentUser, booking);
 
-        return RedirectToPage("./Details", new {id = booking.Id.Value});
+        return RedirectToPage("./Details", new { id = booking.Id.Value });
     }
 }

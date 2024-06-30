@@ -18,9 +18,9 @@ public interface IItemService
             .Include(i => i.Identifiers)
             .FirstOrDefaultAsync(m => m.Id == id);
      */
-    Task<Item?> GetById(Item.ItemId itemId);
+    Task<Item?> GetById(ItemId? itemId);
 
-    Task Delete(Item.ItemId itemId);
+    Task Delete(ItemId itemId);
 
     /*
      Changes = await _context.Audits
@@ -32,10 +32,10 @@ public interface IItemService
             .OrderByDescending(a => a.ChangeTimeUtc)
             .ToListAsync();
     */
-    Task<IEnumerable<RecordChangeEntry>> ChangesForItem(Item.ItemId itemId);
+    Task<IEnumerable<RecordChangeEntry>> ChangesForItem(ItemId itemId);
 
 
-    Task Update(Item.ItemId itemId, User currentUser, Item item);
+    Task Update(ItemId itemId, User currentUser, Item item);
 
     Task<ItemIdentifier> CreateIdentifier(ItemIdentifier itemIdentifier);
 

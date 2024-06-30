@@ -199,7 +199,7 @@
                     var nextBooking = futureBookingsForItem.First();
                     var duration = nextBooking.BookingEnd - nextBooking.BookingStart;
                     <span>
-                        <a asp-area="" asp-page="/Bookings/Details" asp-route-id="@nextBooking.Id.Value">
+                        <a asp-area="" asp-page="/Bookings/Details" asp-route-id="@nextBooking.Id">
                             @nextBooking.BookingStart.ToString("ddd dd/MM/yyyy") to @nextBooking.BookingEnd.ToString("ddd dd/MM/yyyy")
                         </a>
                         <br/>

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using StronglyTypedIds;
 
 namespace EquipmentBookingSystem.Domain.Models;
 
 public class Booking
 {
-    public BookingId Id { get; init; } = default!;
+    public BookingId? Id { get; init; } = default!;
     public DateTime BookingStart { get; set; }
     public DateTime BookingEnd { get; set; }
     public DateTime EventStart { get; set; }
@@ -32,6 +33,9 @@ public class Booking
         return $"{SjaEventName} ({BookingStart} - {BookingEnd})";
     }
 
-    public record BookingId(Guid Value);
 
 }
+
+
+[StronglyTypedId(Template.Guid)]
+public partial struct BookingId { }

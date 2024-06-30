@@ -91,6 +91,6 @@ public class CreateModel : PageModel
             throw new InvalidOperationException("Item ID is null");
         }
 
-        return RedirectToPage("./Edit", new {id = newId});
+        return RedirectToPage("./Edit", new { id = newId });
     }
 }

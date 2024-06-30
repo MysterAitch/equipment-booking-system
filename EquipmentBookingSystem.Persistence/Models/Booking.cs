@@ -40,7 +40,7 @@ public class Booking : BaseEntity
     {
         var domainBooking = new EquipmentBookingSystem.Domain.Models.Booking()
         {
-            Id = new EquipmentBookingSystem.Domain.Models.Booking.BookingId(Id),
+            Id = new EquipmentBookingSystem.Domain.Models.BookingId(Id),
             BookingStart = BookingStart,
             BookingEnd = BookingEnd,
             EventStart = EventStart,

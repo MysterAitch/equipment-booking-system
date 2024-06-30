@@ -19,13 +19,13 @@ public class ItemIdentifier
     public DateTime? To { get; set; }
 
     public HashSet<Item> Items { get; } = new();
-    
-    
+
+
     public EquipmentBookingSystem.Domain.Models.ItemIdentifier ToDomain()
     {
         var domainItemIdentifier = new EquipmentBookingSystem.Domain.Models.ItemIdentifier()
         {
-            Id = new EquipmentBookingSystem.Domain.Models.ItemIdentifier.ItemIdentifierId(Id),
+            Id = new EquipmentBookingSystem.Domain.Models.ItemIdentifierId(Id),
             Type = Type,
             Value = Value,
             From = From,

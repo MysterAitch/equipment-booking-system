@@ -20,13 +20,13 @@ public class Item : BaseEntity
     public String? DamageNotes { get; set; } = string.Empty;
 
     public String? Notes { get; set; } = string.Empty;
-    
-    
+
+
     public EquipmentBookingSystem.Domain.Models.Item ToDomain()
     {
         var domainItem = new EquipmentBookingSystem.Domain.Models.Item()
         {
-            Id = new EquipmentBookingSystem.Domain.Models.Item.ItemId(Id),
+            Id = new EquipmentBookingSystem.Domain.Models.ItemId(Id),
             Manufacturer = Manufacturer,
             Model = Model,
             DamageNotes = DamageNotes,
