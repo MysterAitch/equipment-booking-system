@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using EquipmentBookingSystem.Application.Services;
 using EquipmentBookingSystem.Domain.Models;
+// using EquipmentBookingSystem.Website.Pages.Shared;
 using EquipmentBookingSystem.Website.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -37,55 +38,53 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        Data.ItemId = itemId.Value;
-        Data.Manufacturer = item.Manufacturer;
-        Data.Model = item.Model;
-        Data.DamageNotes = item.DamageNotes;
-        Data.Notes = item.Notes;
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
+        Data = DataModel.FromDomain(item);
 
-        // TODO: Expand with view model for identifiers
-        Data.Identifiers = item.Identifiers;
+        var identifiers = await _itemService
+            .GetIdentifiersForItem(currentUser, itemId);
 
-
-        Data.OrderedIdentifiers = item.Identifiers
+        Data.OrderedIdentifiers = identifiers
             .OrderBy(i => i.Type)
             .ThenBy(i => i.From)
             .ThenBy(i => i.To)
             .ThenBy(i => i.Value)
+            .Select(i => DataModel.Identifier.FromDomain(i))
             .ToList();
+
 
         if (Data.OrderedIdentifiers.Count == 0)
         {
-            Data.OrderedIdentifiers.Add(new ItemIdentifier()
+            Data.OrderedIdentifiers.Add(new DataModel.Identifier()
             {
-                Id = new ItemIdentifierId(Guid.NewGuid()),
+                Id = Guid.Empty,
                 Type = "Serial Number",
                 Value = string.Empty,
                 From = DateTime.Today,
                 To = null,
             });
 
-            Data.OrderedIdentifiers.Add(new ItemIdentifier()
+            Data.OrderedIdentifiers.Add(new DataModel.Identifier()
             {
-                Id = new ItemIdentifierId(Guid.NewGuid()),
+                Id = Guid.Empty,
                 Type = "ProCloud Asset ID",
                 Value = string.Empty,
                 From = DateTime.Today,
                 To = null,
             });
 
-            Data.OrderedIdentifiers.Add(new ItemIdentifier()
+            Data.OrderedIdentifiers.Add(new DataModel.Identifier()
             {
-                Id = new ItemIdentifierId(Guid.NewGuid()),
+                Id = Guid.Empty,
                 Type = "Call Sign",
                 Value = string.Empty,
                 From = DateTime.Today,
                 To = null,
             });
 
-            Data.OrderedIdentifiers.Add(new ItemIdentifier()
+            Data.OrderedIdentifiers.Add(new DataModel.Identifier()
             {
-                Id = new ItemIdentifierId(Guid.NewGuid()),
+                Id = Guid.Empty,
                 Type = "ISSI",
                 Value = string.Empty,
                 From = DateTime.Today,
@@ -111,69 +110,20 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
 
         if (!ModelState.IsValid)
         {
-            Data.OrderedIdentifiers = item.Identifiers
-                .OrderBy(i => i.From)
-                .ThenBy(i => i.To)
-                .ThenBy(i => i.Type)
-                .ThenBy(i => i.Value)
-                .ToList();
-
+            // Redisplay the form with the submitted data
             return Page();
         }
 
-
-        item.Manufacturer = Data.Manufacturer;
-        item.Model = Data.Model;
-        item.DamageNotes = Data.DamageNotes;
-        item.Notes = Data.Notes;
-
-
-        // Update oldIdentifiers -- update where Id matches, remove where not in OrderedIdentifiers, and add where not in oldIdentifiers (inserting Id)
-        var oldIdentifiers = item.Identifiers.ToList();
-        foreach (var oldIdentifier in oldIdentifiers)
-        {
-            var orderedIdentifier = Data.OrderedIdentifiers.SingleOrDefault(i => i.Id == oldIdentifier.Id);
-            if (orderedIdentifier == null)
-            {
-                item.Identifiers.Remove(oldIdentifier);
-            }
-            else
-            {
-                oldIdentifier.Type = orderedIdentifier.Type;
-                oldIdentifier.Value = orderedIdentifier.Value;
-                oldIdentifier.From = orderedIdentifier.From;
-                oldIdentifier.To = orderedIdentifier.To;
-            }
-        }
-
-        foreach (var orderedIdentifier in Data.OrderedIdentifiers)
-        {
-            if (oldIdentifiers.All(i => i.Id != orderedIdentifier.Id))
-            {
-                // This is a new identifier, not previously seen -- therefore add it
-                var itemIdentifier = new ItemIdentifier()
-                {
-                    Id = Guid.Empty == orderedIdentifier.Id?.Value
-                        ? new ItemIdentifierId(Guid.NewGuid())
-                        : orderedIdentifier.Id,
-                    Type = orderedIdentifier.Type,
-                    Value = orderedIdentifier.Value,
-                    From = orderedIdentifier.From,
-                    To = orderedIdentifier.To,
-                };
-                item.Identifiers.Add(itemIdentifier);
-
-                var newIdentifier = await _itemService.CreateIdentifier(itemIdentifier);
-            }
-        }
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
+        DataModel.UpdateItem(item, Data);
 
         await _itemService.Update(itemId, currentUser, item);
+        // await _itemService.UpdateIdentifiersForItem(currentUser, itemId, selectedIdentifiersIds);
 
-        return RedirectToPage("./Details", new { id = item.Id?.Value ?? throw new Exception("Item ID not found") });
+        return RedirectToPage("./Details", new { id = item.Id });
     }
 
 
@@ -190,7 +140,7 @@ public class EditModel : PageModel
 
         public HashSet<Booking> Bookings { get; set; } = new();
 
-        public HashSet<ItemIdentifier> Identifiers { get; set; } = new();
+        // public HashSet<ItemIdentifier> Identifiers { get; set; } = new();
 
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string DamageNotes { get; set; } = string.Empty;
@@ -198,20 +148,89 @@ public class EditModel : PageModel
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string Notes { get; set; } = string.Empty;
 
-        public List<ItemIdentifier> OrderedIdentifiers { get; set; } = new();
 
-        public Item ToDomain()
+        public List<Identifier> OrderedIdentifiers { get; set; } = new();
+
+
+        public class Identifier
         {
-            return new Item
+            public Guid Id { get; set; }
+            public string Type { get; set; } = string.Empty;
+            public string Value { get; set; } = string.Empty;
+            public DateTime? From { get; set; }
+            public DateTime? To { get; set; }
+
+            internal static DataModel.Identifier FromDomain(ItemIdentifier identifier) => new()
             {
-                Id = new ItemId(ItemId),
-                Manufacturer = Manufacturer,
-                Model = Model,
-                DamageNotes = DamageNotes,
-                Notes = Notes,
-                Identifiers = Identifiers,
+                Id = identifier.Id?.Value ?? throw new NullReferenceException(),
+                Type = identifier.Type,
+                Value = identifier.Value,
+                From = identifier.From,
+                To = identifier.To,
             };
         }
 
+
+
+        internal static DataModel FromDomain(Item item) => new()
+        {
+            ItemId = item.Id?.Value ?? throw new NullReferenceException(),
+
+            Manufacturer = item.Manufacturer,
+            Model = item.Model,
+            DamageNotes = item.DamageNotes,
+            Notes = item.Notes,
+        };
+
+        internal static void UpdateItem(Item item, DataModel data)
+        {
+            item.Manufacturer = data.Manufacturer;
+            item.Model = data.Model;
+            item.DamageNotes = data.DamageNotes;
+            item.Notes = data.Notes;
+        }
+
+        // public static void UpdateIdentifiers(Item item, DataModel data)
+        // {
+        //     var submittedIdentifiers = data.Identifiers.ToList();
+        //
+        //     // Update oldIdentifiers -- update where Id matches, remove where not in OrderedIdentifiers, and add where not in oldIdentifiers (inserting Id)
+        //     var oldIdentifiers = item.Identifiers.ToList();
+        //     foreach (var oldIdentifier in oldIdentifiers)
+        //     {
+        //         var orderedIdentifier = data.OrderedIdentifiers.SingleOrDefault(i => i.Id == oldIdentifier.Id);
+        //         if (orderedIdentifier == null)
+        //         {
+        //             item.Identifiers.Remove(oldIdentifier);
+        //         }
+        //         else
+        //         {
+        //             oldIdentifier.Type = orderedIdentifier.Type;
+        //             oldIdentifier.Value = orderedIdentifier.Value;
+        //             oldIdentifier.From = orderedIdentifier.From;
+        //             oldIdentifier.To = orderedIdentifier.To;
+        //         }
+        //     }
+        //
+        //     foreach (var orderedIdentifier in data.OrderedIdentifiers)
+        //     {
+        //         if (oldIdentifiers.All(i => i.Id != orderedIdentifier.Id))
+        //         {
+        //             // This is a new identifier, not previously seen -- therefore add it
+        //             var itemIdentifier = new ItemIdentifier()
+        //             {
+        //                 Id = Guid.Empty == orderedIdentifier.Id?.Value
+        //                     ? new ItemIdentifierId(Guid.NewGuid())
+        //                     : orderedIdentifier.Id,
+        //                 Type = orderedIdentifier.Type,
+        //                 Value = orderedIdentifier.Value,
+        //                 From = orderedIdentifier.From,
+        //                 To = orderedIdentifier.To,
+        //             };
+        //             item.Identifiers.Add(itemIdentifier);
+        //
+        //         }
+        //     }
+        // }
     }
 }

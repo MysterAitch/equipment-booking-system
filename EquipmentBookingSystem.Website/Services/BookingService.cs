@@ -2,6 +2,7 @@ using EquipmentBookingSystem.Application.Services;
 using EquipmentBookingSystem.Domain.Models;
 using EquipmentBookingSystem.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging;
 
 namespace EquipmentBookingSystem.Website.Services;
 
@@ -104,7 +105,7 @@ public class BookingService : IBookingService
         return recordChangeEntries;
     }
 
-    public async Task<IEnumerable<Item>> ItemsPotentiallyAvailableForBooking(BookingId bookingId)
+    public async Task<IEnumerable<Item>> ItemsPotentiallyAvailableForBooking(User user, BookingId bookingId)
     {
         var itemEntities = await _context.Item
             .Include(i => i.Bookings)
@@ -144,7 +145,7 @@ public class BookingService : IBookingService
         return domainBookings;
     }
 
-    public async Task<IEnumerable<Booking>> BookingsForItems(User currentUser, List<ItemId> itemIds)
+    public async Task<IEnumerable<Booking>> BookingsForItems(User user, List<ItemId> itemIds)
     {
         var itemIdValues = itemIds.Select(id => id.Value).ToList();
         var bookingEntities = await _context.Booking
@@ -159,7 +160,7 @@ public class BookingService : IBookingService
         return domainBookings;
     }
 
-    public Task UpdateItems(BookingId bookingId, List<Guid> selectedItemIds)
+    public async Task UpdateItems(BookingId bookingId, List<Guid> selectedItemIds)
     {
         var bookingEntity = _context.Booking
             .Include(b => b.Items)
@@ -170,23 +171,29 @@ public class BookingService : IBookingService
             throw new InvalidOperationException("Booking not found");
         }
 
+        var availableItems = await _context.Item
+            // .Where()
+            .ToListAsync();
 
-        var submittedIds = bookingEntity.Items.Select(item => item.Id).ToHashSet();
-        var currentIds = bookingEntity.Items.Select(item => item.Id).ToHashSet();
-
-        // Remove items that are not in the updated booking
-        // Note: Cannot remove and re-add, because entity framework will be tracking the objects
-        // "InvalidOperationException: The instance of entity type 'Item' cannot be tracked because another instance with the key value '{Id: [...]}' is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached"
-        bookingEntity.Items.RemoveWhere(item => submittedIds.Contains(item.Id));
-
-        // Add items that are in the updated booking but not in the current booking
-        var newIds = bookingEntity.Items.Where(item => !currentIds.Contains(item.Id));
-        foreach (var item in newIds)
+        var availableItemIds = availableItems.Select(x => x.Id).ToHashSet();
+        if(selectedItemIds.Any(guid => !availableItemIds.Contains(guid)))
         {
-            bookingEntity.Items.Add(item);
+            throw new InvalidOperationException("Item not found, not able to attache to booking");
         }
 
+        var selectedItems = availableItems
+            .Where(i => selectedItemIds.Contains(i.Id))
+            .ToList();
+
+        bookingEntity.Items.Clear();
+        bookingEntity.Items.AddRange(selectedItems);
+
         _context.Update(bookingEntity);
-        return _context.SaveChangesAsync();
+        foreach (var bookingEntityItem in bookingEntity.Items)
+        {
+            _context.Update(bookingEntityItem);
+        }
+
+        await _context.SaveChangesAsync();
     }
 }

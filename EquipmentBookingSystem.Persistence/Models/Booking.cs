@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace EquipmentBookingSystem.Persistence.Models;
 
@@ -53,10 +54,7 @@ public class Booking : BaseEntity
             SjaEventName = SjaEventName,
             SjaEventType = SjaEventType,
 
-
-            // // TODO: convert separately then add on
-            // Items = Items.Select(item => item.ToDomain()).ToHashSet(),
-
+            Items = Items.Select(item => item.ToDomain()).ToHashSet(),
         };
 
         return domainBooking;

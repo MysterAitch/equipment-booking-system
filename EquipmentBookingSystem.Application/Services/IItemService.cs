@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EquipmentBookingSystem.Domain.Models;
@@ -47,4 +48,8 @@ public interface IItemService
             .ToListAsync();
     */
     Task<IList<Item>> GetVisibleItems(User currentUser);
+
+    Task<IEnumerable<ItemIdentifier>> GetIdentifiersForItem(User currentUser, ItemId itemId);
+
+    Task UpdateIdentifiersForItem(User user, ItemId itemId, List<Guid> itemIdentifiers);
 }

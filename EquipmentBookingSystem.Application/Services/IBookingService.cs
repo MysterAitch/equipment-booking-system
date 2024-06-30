@@ -40,7 +40,7 @@ public interface IBookingService
             .Include(i => i.Identifiers)
             .ToListAsync();
      */
-    Task<IEnumerable<Item>> ItemsPotentiallyAvailableForBooking(BookingId bookingId);
+    Task<IEnumerable<Item>> ItemsPotentiallyAvailableForBooking(User user, BookingId bookingId);
 
     /*
         Bookings = await _context.Booking
@@ -51,6 +51,6 @@ public interface IBookingService
     Task<IEnumerable<Booking>> GetVisibleBookings(User user);
 
     Task<IEnumerable<Booking>> BookingsForItem(User? user, ItemId itemId);
-    Task<IEnumerable<Booking>> BookingsForItems(User currentUser, List<ItemId> itemIds);
+    Task<IEnumerable<Booking>> BookingsForItems(User user, List<ItemId> itemIds);
     Task UpdateItems(BookingId bookingId, List<Guid> selectedItemIds);
 }

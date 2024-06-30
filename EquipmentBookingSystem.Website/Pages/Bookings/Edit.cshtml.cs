@@ -39,10 +39,11 @@ public class EditModel : PageModel
             return NotFound();
         }
 
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
         Data = DataModel.FromDomain(booking);
 
         var items = await _bookingService
-            .ItemsPotentiallyAvailableForBooking(bookingId);
+            .ItemsPotentiallyAvailableForBooking(currentUser, bookingId);
         Data.Options = items
             .OrderBy(i => i.DisplayName())
             .Select(s => new CheckBoxListItem()
@@ -78,31 +79,15 @@ public class EditModel : PageModel
             return Page();
         }
 
+        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
         DataModel.UpdateBooking(booking, Data);
-
-        var items = (await _bookingService
-            .ItemsPotentiallyAvailableForBooking(bookingId)).ToList();
 
         var selectedItemIds = Data.Options
             .Where(o => o.IsChecked)
             .Select(o => o.Id)
             .ToList();
 
-        var selectedButUnavailableItemIds = selectedItemIds
-            .Except(items.Select(i => i.Id.Value.Value))
-            .ToList();
-
-        if (selectedButUnavailableItemIds.Any())
-        {
-            // Attempting to book an item that is not available
-            // TODO: Show user a message -- add an error and return Page(), maybe?
-            return BadRequest();
-        }
-
-
-        var currentUser = _userService.GetCurrentUser() ?? throw new UnidentifiedUserException();
         await _bookingService.Update(bookingId, currentUser, booking);
-
         await _bookingService.UpdateItems(bookingId, selectedItemIds);
 
         return RedirectToPage("./Details", new { id = booking.Id });

@@ -152,4 +152,34 @@ public class ItemService : IItemService
             .ToList();
     }
 
+    public async Task<IEnumerable<ItemIdentifier>> GetIdentifiersForItem(User currentUser, ItemId itemId)
+    {
+        return (await _context.Item
+                .Include(item => item.Identifiers)
+                .Where(i => i.Id == itemId.Value)
+                .ToListAsync()
+            )
+            .SelectMany(i => i.Identifiers)
+            .Select(i => i.ToDomain());
+    }
+
+    public async Task UpdateIdentifiersForItem(User user, ItemId itemId, List<Guid> itemIdentifiers)
+    {
+        var itemEntity = await _context.Item
+            .Include(i => i.Identifiers)
+            .FirstOrDefaultAsync(m => m.Id == itemId.Value);
+
+        if (itemEntity is null)
+        {
+            throw new Exception("Item not found");
+        }
+
+        var itemIdentifierEntities = await _context.ItemIdentifiers
+            .Where(i => itemIdentifiers.Contains(i.Id))
+            .ToListAsync();
+
+        itemEntity.Identifiers = itemIdentifierEntities.ToHashSet();
+
+        await _context.SaveChangesAsync();
+    }
 }
