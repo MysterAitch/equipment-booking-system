@@ -127,7 +127,7 @@ public class ItemService : IItemService
         foreach (var preExistingItemIdentifier in preExistingItemIdentifiers)
         {
             var submittedItemIdentifier = item.Identifiers
-                .FirstOrDefault(x => x.Id is not null && x.Id?.Value == preExistingItemIdentifier.Id);
+                .FirstOrDefault(x => x.Id is not null && x.Id?.Value != Guid.Empty && x.Id?.Value == preExistingItemIdentifier.Id);
 
             if (submittedItemIdentifier is not null)
             {
@@ -144,7 +144,7 @@ public class ItemService : IItemService
 
         // 2. add the new identifiers
         var newIdentifiers = item.Identifiers
-            .Where(x => x.Id is null)
+            .Where(x => x.Id is null || x.Id?.Value == Guid.Empty )
             .Select(EquipmentBookingSystem.Persistence.Models.ItemIdentifier.FromDomain)
             .ToHashSet();
 

@@ -41,9 +41,15 @@ public class ItemIdentifier
 
     public static EquipmentBookingSystem.Persistence.Models.ItemIdentifier FromDomain(Domain.Models.ItemIdentifier identifier)
     {
+        var id = identifier.Id?.Value ?? Guid.Empty;
+        if (id == Guid.Empty)
+        {
+            id = Guid.NewGuid();
+        }
+
         var itemIdentifierEntity = new EquipmentBookingSystem.Persistence.Models.ItemIdentifier()
         {
-            Id = identifier.Id?.Value ?? Guid.NewGuid(),
+            Id = id,
             Type = identifier.Type,
             Value = identifier.Value,
             From = identifier.From,
