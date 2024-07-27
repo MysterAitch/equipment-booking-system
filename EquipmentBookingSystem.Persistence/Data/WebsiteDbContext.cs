@@ -62,6 +62,8 @@ public class WebsiteDbContext : DbContext
                 _ => throw new Exception("unrecognised item type: " + changedEntity.Entity.GetType().Name + " in AuditEntryForChanges()")
             };
 
+            // TODO: Also include audit entry for collection navigation properties
+
             var databaseValues = changedEntity.GetDatabaseValues();
             foreach (var property in changedEntity.CurrentValues.Properties)
             {
