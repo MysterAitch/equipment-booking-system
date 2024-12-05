@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of SonarCloud 44444444analysis
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
@@ -40,7 +40,7 @@ jobs:
 
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
         with:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
