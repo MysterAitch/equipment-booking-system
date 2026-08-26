@@ -89,7 +89,7 @@ jobs:
           name: equipment-booking-system-build-zip
 
       - name: Login to Azure
-        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2
+        uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EC8D41D7ED194998B2FFA5AB6914AB9E }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F310A3D7A0764AB2A9C27424D82C3755 }}
