@@ -10,7 +10,9 @@
   ],
   "automergeType": "pr",
   "semanticCommits": "enabled",
-  "dependencyDashboard": true,
+  "dependencyDashboard": {
+    "enabled": true
+  },
   "labels": ["dependencies"],
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
